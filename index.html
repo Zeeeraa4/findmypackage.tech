@@ -193,6 +193,7 @@
             </span>
           </h2>
           <p class="text-sm text-slate-500" id="resultCount"></p>
+          <p id="demoNote" class="hidden mt-1 text-xs text-amber-700">Demo mode: alerts are saved only in this browser. Connect a Supabase project (see supabase-setup.sql) to share them worldwide.</p>
         </div>
         <div class="relative w-full sm:w-80">
           <i data-lucide="search" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
@@ -454,6 +455,12 @@
 
   /* ---------- Config ---------- */
   const STORAGE_KEY = 'fmp_alerts_v2'; // bumped so any earlier sample data is cleared
+
+  // Shared backend (Supabase). Paste your values from Project Settings → API after running supabase-setup.sql.
+  // Leave both empty to run in local demo mode (alerts visible only in this browser).
+  const SUPABASE_URL = '';       // e.g. 'https://abcdxyz.supabase.co'
+  const SUPABASE_ANON_KEY = '';  // the public "anon" key (never the service_role key)
+  const REMOTE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
   const WARNING_MSG = 'For legal and privacy protection, exact addresses, tracking numbers, and personal names are strictly prohibited.';
   const NOTICE_TEMPLATE = (zip, carrier = 'Amazon') =>
     `Hello ${carrier} Support, an anonymous neighbor has logged my misdelivered package as safely held in Zip Code ${zip}. Please instruct your local delivery courier to retrieve it or update my order status.`;
@@ -462,7 +469,8 @@
   const SEED = [];
 
   /* ---------- State ---------- */
-  let alerts = load();
+  let alerts = REMOTE ? [] : load();
+  let loaded = !REMOTE;
   let activeAlert = null;
 
   function load() {
@@ -474,6 +482,58 @@
   }
   function save() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(alerts)); } catch (_) { /* ignore */ }
+  }
+
+  /* ---------- Shared backend (Supabase REST) ---------- */
+  function api(path, opts = {}) {
+    return fetch(`${SUPABASE_URL.replace(/\/+$/, '')}/rest/v1/${path}`, {
+      ...opts,
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        ...(opts.headers || {}),
+      },
+    });
+  }
+  async function fetchAlerts() {
+    const r = await api('alerts?select=id,created_at,location,zip,description,status,verified&order=created_at.desc&limit=200');
+    if (!r.ok) throw new Error('load_failed');
+    const rows = await r.json();
+    return rows.map((x) => ({
+      id: x.id, location: x.location, zip: x.zip, desc: x.description,
+      status: x.status, verified: !!x.verified, ts: Date.parse(x.created_at),
+    }));
+  }
+  async function postAlert(e) {
+    const r = await api('alerts', {
+      method: 'POST',
+      headers: { Prefer: 'return=minimal' },
+      body: JSON.stringify({ location: e.location, zip: e.zip, description: e.desc, fp: e.fp }),
+    });
+    if (!r.ok) {
+      const text = await r.text().catch(() => '');
+      const err = new Error('post_failed');
+      err.privacy = /privacy_violation/.test(text);
+      err.rate = /rate_limited/.test(text);
+      throw err;
+    }
+  }
+  async function verifyRemote(id, fp) {
+    const r = await api('rpc/verify_claim', { method: 'POST', body: JSON.stringify({ p_id: id, p_fp: fp }) });
+    if (!r.ok) throw new Error('verify_failed');
+    return r.json(); // 'match' | 'no_match' | 'locked'
+  }
+  let loadWarned = false;
+  async function refresh() {
+    try {
+      alerts = await fetchAlerts();
+      loaded = true; loadWarned = false;
+      render();
+    } catch (_) {
+      if (!loaded) document.getElementById('resultCount').textContent = "Couldn't load alerts. Retrying…";
+      if (!loadWarned) { loadWarned = true; toast("Couldn't refresh alerts. Retrying shortly…", 'info'); }
+    }
   }
 
   /* ---------- DOM ---------- */
@@ -606,6 +666,12 @@
   /* ---------- Render board ---------- */
   function render() {
     const q = searchEl.value.trim().toLowerCase();
+    if (!loaded) {
+      board.innerHTML = '';
+      emptyState.classList.add('hidden');
+      resultCount.textContent = 'Loading alerts…';
+      return;
+    }
     const list = alerts
       .filter((a) => !q || a.location.toLowerCase().includes(q) || (a.zip || '').includes(q))
       .sort((a, b) => b.ts - a.ts);
@@ -736,10 +802,10 @@
     claimError.classList.add('hidden');
     claimTracking.classList.remove('border-red-400');
     $('claimWhere').textContent = a.location;
-    showClaimStep(a.fp ? 'claimStepVerify' : 'claimStepNoFp');
+    showClaimStep(a.verified ? 'claimStepVerify' : 'claimStepNoFp');
     claimModal.classList.remove('hidden'); claimModal.classList.add('flex');
     document.body.style.overflow = 'hidden';
-    if (a.fp) claimTracking.focus();
+    if (a.verified) claimTracking.focus();
   }
   function closeClaim() {
     claimModal.classList.add('hidden'); claimModal.classList.remove('flex');
@@ -775,12 +841,23 @@
     const h = await hashTracking(norm);
     if (!h) { showClaimError('Secure verification is not available in this browser. Open the site over https, or use the carrier retrieval notice instead.'); return; }
 
-    if (h === claimAlert.fp) {
+    let result;
+    if (REMOTE) {
+      // The server compares fingerprints and enforces the lockout. The fingerprint never reaches the browser.
+      try { result = await verifyRemote(claimAlert.id, h); }
+      catch (_) { showClaimError('Could not reach the server. Please try again in a moment.'); return; }
+    } else {
+      result = h === claimAlert.fp ? 'match' : 'no_match';
+    }
+
+    if (result === 'match') {
       clearAttempts(claimAlert.id);
       claimTracking.value = '';
       renderClaimResult(norm);
+    } else if (result === 'locked') {
+      showClaimError('Too many attempts, so verification is locked for 15 minutes.');
     } else {
-      const a = recordFail(claimAlert.id);
+      const a = REMOTE ? { until: 0 } : recordFail(claimAlert.id);
       showClaimError("That tracking number doesn't match this alert." + (a.until ? ' Too many attempts, so verification is locked for 15 minutes.' : ''));
     }
   });
@@ -886,8 +963,27 @@
       status: 'Awaiting Carrier Retrieval',
       ts: Date.now(),
     };
-    alerts.unshift(entry);
-    save();
+    if (REMOTE) {
+      submitBtn.disabled = true;
+      try {
+        await postAlert(entry);
+        await refresh();
+      } catch (err) {
+        if (err.privacy) {
+          toast(WARNING_MSG, 'error');
+          locationEl.value = ''; descEl.value = ''; charCount.textContent = '0/240';
+        } else if (err.rate) {
+          toast('The board is very busy right now. Please try again in a minute.', 'info');
+        } else {
+          toast("Couldn't post your alert. Check your connection and try again.", 'error');
+        }
+        updateSubmitState();
+        return;
+      }
+    } else {
+      alerts.unshift(entry);
+      save();
+    }
     form.reset();
     charCount.textContent = '0/240';
     updateSubmitState();
@@ -902,8 +998,13 @@
 
   /* ---------- Init ---------- */
   lucide.createIcons();
+  $('demoNote').classList.toggle('hidden', REMOTE);
   render();
   updateSubmitState();
+  if (REMOTE) {
+    refresh();
+    setInterval(refresh, 30000); // pull new alerts from other visitors every 30 seconds
+  }
 })();
 </script>
 </body>
