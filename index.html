@@ -69,7 +69,7 @@
         FindMyPackage.tech does <span class="font-semibold text-emerald-300">not store, hold, or facilitate the direct exchange of physical mail or packages</span>.
         This site is purely an <span class="font-semibold text-emerald-300">anonymous neighborhood alert system</span>.
         We never publish exact addresses, names, or tracking numbers, and we never connect finders with recipients.
-        An optional tracking number is never displayed and is kept only as a one-way hash for verification.
+        The finder's tracking number is required to deter scammers, is never displayed, and is kept only as a one-way hash for verification.
         Retrieval happens only through the official carrier.
       </p>
     </div>
@@ -137,9 +137,20 @@
             </div>
 
             <div>
+              <label for="street" class="block text-sm font-semibold text-slate-700 mb-1.5">Street <span class="font-normal text-slate-400">(no house number)</span></label>
+              <div class="relative">
+                <i data-lucide="signpost" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                <input id="street" type="text" maxlength="60" autocomplete="off"
+                  placeholder="e.g., Elm Street"
+                  class="w-full rounded-xl border border-slate-300 bg-white pl-10 pr-3 py-3 text-sm placeholder-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 transition" />
+              </div>
+              <p class="mt-1.5 text-xs text-slate-500">Street name only. No house number, unit, or names.</p>
+            </div>
+
+            <div>
               <label for="description" class="block text-sm font-semibold text-slate-700 mb-1.5">Package Description</label>
               <textarea id="description" rows="4" maxlength="240"
-                placeholder="e.g., Medium brown box with blue tape, found near Elm Street"
+                placeholder="e.g., Medium brown box with blue tape, left by the side gate"
                 class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm placeholder-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 transition resize-none"></textarea>
               <div class="mt-1.5 flex justify-between text-xs text-slate-500">
                 <span>Describe size, color &amp; general spot. Nothing personal.</span>
@@ -149,7 +160,7 @@
 
             <div>
               <label for="tracking" class="block text-sm font-semibold text-slate-700 mb-1.5">
-                Tracking Number <span class="font-normal text-slate-400">(optional · private)</span>
+                Tracking Number <span class="font-normal text-slate-400">(required · private)</span>
               </label>
               <div class="relative">
                 <i data-lucide="lock-keyhole" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
@@ -157,7 +168,7 @@
                   placeholder="e.g., 1Z… or TBA…"
                   class="w-full rounded-xl border border-slate-300 bg-white pl-10 pr-3 py-3 text-sm font-mono tracking-wide placeholder-slate-400 placeholder:font-sans placeholder:tracking-normal focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 transition" />
               </div>
-              <p class="mt-1.5 text-xs text-slate-500">Never shown on the board. Saved only as a one-way fingerprint (hash), not as the number itself. Never type it into the public fields above.</p>
+              <p class="mt-1.5 text-xs text-slate-500">Required to deter scammers: only the real owner can match it later. Never shown on the board. Saved only as a one-way fingerprint (hash), not as the number itself. Never type it into the public fields above.</p>
             </div>
 
             <label class="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 cursor-pointer hover:border-indigo-300 transition has-[:checked]:border-emerald-400 has-[:checked]:bg-emerald-50/60">
@@ -458,8 +469,8 @@
 
   // Shared backend (Supabase). Paste your values from Project Settings → API after running supabase-setup.sql.
   // Leave both empty to run in local demo mode (alerts visible only in this browser).
-  const SUPABASE_URL = 'https://supabase.com/dashboard/project/xqqoymwsamdfpozuphze/settings/api-keys';       // e.g. 'https://abcdxyz.supabase.co'
-  const SUPABASE_ANON_KEY = 'sb_publishable_bRg7a-ztOlrzD_DbcJp4Nw_WoD2PDJ9';  // the public "anon" key (never the service_role key)
+  const SUPABASE_URL = '';       // e.g. 'https://abcdxyz.supabase.co'
+  const SUPABASE_ANON_KEY = '';  // the public "anon" key (never the service_role key)
   const REMOTE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
   const WARNING_MSG = 'For legal and privacy protection, exact addresses, tracking numbers, and personal names are strictly prohibited.';
   const NOTICE_TEMPLATE = (zip, carrier = 'Amazon') =>
@@ -486,36 +497,54 @@
 
   /* ---------- Shared backend (Supabase REST) ---------- */
   function api(path, opts = {}) {
-    return fetch(`${SUPABASE_URL.replace(/\/+$/, '')}/rest/v1/${path}`, {
-      ...opts,
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        ...(opts.headers || {}),
-      },
-    });
+    // Tolerate a pasted URL with a trailing slash or "/rest/v1"
+    const base = SUPABASE_URL.trim().replace(/\/+$/, '').replace(/\/rest\/v1$/i, '');
+    const key = SUPABASE_ANON_KEY.trim();
+    const headers = { apikey: key, 'Content-Type': 'application/json', ...(opts.headers || {}) };
+    // Legacy "anon" keys are JWTs and also go in Authorization. Newer "publishable" keys (sb_publishable_…)
+    // are NOT JWTs and are rejected if sent as a Bearer token, so they go in the apikey header only.
+    if (key.startsWith('eyJ')) headers.Authorization = `Bearer ${key}`;
+    return fetch(`${base}/rest/v1/${path}`, { ...opts, headers });
   }
   async function fetchAlerts() {
-    const r = await api('alerts?select=id,created_at,location,zip,description,status,verified&order=created_at.desc&limit=200');
-    if (!r.ok) throw new Error('load_failed');
+    const r = await api('alerts?select=id,created_at,location,zip,street,description,status,verified&order=created_at.desc&limit=200');
+    if (!r.ok) {
+      console.error('[FindMyPackage] could not load alerts:', r.status, await r.text().catch(() => ''));
+      throw new Error('load_failed');
+    }
     const rows = await r.json();
     return rows.map((x) => ({
-      id: x.id, location: x.location, zip: x.zip, desc: x.description,
+      id: x.id, location: x.location, zip: x.zip, street: x.street, desc: x.description,
       status: x.status, verified: !!x.verified, ts: Date.parse(x.created_at),
     }));
   }
   async function postAlert(e) {
-    const r = await api('alerts', {
-      method: 'POST',
-      headers: { Prefer: 'return=minimal' },
-      body: JSON.stringify({ location: e.location, zip: e.zip, description: e.desc, fp: e.fp }),
-    });
+    let r;
+    try {
+      r = await api('alerts', {
+        method: 'POST',
+        headers: { Prefer: 'return=minimal' },
+        body: JSON.stringify({ location: e.location, zip: e.zip, street: e.street, description: e.desc, fp: e.fp }),
+      });
+    } catch (netErr) {
+      console.error('[FindMyPackage] network error while posting:', netErr);
+      const err = new Error('network');
+      err.kind = 'network';
+      throw err;
+    }
     if (!r.ok) {
-      const text = await r.text().catch(() => '');
+      let info = {};
+      try { info = await r.json(); } catch (_) { /* body was not JSON */ }
+      console.error('[FindMyPackage] post rejected:', r.status, info);
+      const text = [info.code, info.message, info.details, info.hint].filter(Boolean).join(' ');
       const err = new Error('post_failed');
+      err.status = r.status;
       err.privacy = /privacy_violation/.test(text);
       err.rate = /rate_limited/.test(text);
+      err.tracking = /tracking_required/.test(text);
+      err.street = /street_required/.test(text);
+      err.auth = r.status === 401 || /JWT|api key|apikey/i.test(text);
+      err.setup = r.status === 404 || /PGRST20[45]|42703|42P01|42501|schema cache|permission denied/i.test(text);
       throw err;
     }
   }
@@ -540,7 +569,7 @@
   const $ = (id) => document.getElementById(id);
   const form = $('alertForm'), locationEl = $('location'), descEl = $('description');
   const agreeEl = $('agree'), submitBtn = $('submitBtn'), charCount = $('charCount');
-  const trackingEl = $('tracking');
+  const trackingEl = $('tracking'), streetEl = $('street');
   const board = $('board'), emptyState = $('emptyState'), resultCount = $('resultCount'), searchEl = $('search');
   const modal = $('modal'), noticeText = $('noticeText'), copyBtn = $('copyBtn'), copyLabel = $('copyLabel');
 
@@ -560,7 +589,7 @@
     // Apartment / unit / suite / house markers
     unitMarker: /(?:#\s?\d+|\b(?:apt|apartment|unit|suite|ste|room|rm|bldg|building|house|no\.?|number)\.?\s*#?\s*\d+[a-z]?\b)/i,
     // Titles and explicit name cues
-    nameTitle: /\b(?:mr|mrs|ms|miss|mx|dr|prof)\.?\s+[A-Z][a-z]+/,
+    nameTitle: /\b(?:Mr|Mrs|Ms|Miss|Mx|Dr|Prof|mr|mrs|ms|miss|mx|dr|prof)\.?\s+[A-Z][a-z]+/,
     nameCue: /\b(?:addressed\s+to|attn\.?|attention|belongs?\s+to|name\s+(?:is|on|says|reads)|label\s+(?:says|reads)|labeled|labelled|shipped\s+to|deliver(?:ed)?\s+to|recipient\s+(?:is|name)|for\s+the\s+(?:family|residents?)\s+of|signed\s+by|from\s+(?:mr|mrs|ms))\b\s*:?\s*[A-Za-z]{2,}/i,
   };
 
@@ -602,6 +631,21 @@
       }
       if (looksLikePersonName(t)) return true;
     }
+    return false;
+  }
+
+  // Street field: a street NAME is fine, a full address is not. No house numbers, units, names or tracking numbers.
+  function violatesStreet(text) {
+    const t = (text || '').trim();
+    if (!t) return false;
+    if (patterns.carrierTracking.test(t)) return true;
+    if (patterns.longDigits.test(t)) return true;
+    if (patterns.houseNumberStreet.test(t)) return true;
+    if (patterns.unitMarker.test(t)) return true;
+    if (patterns.nameTitle.test(t)) return true;
+    if (patterns.nameCue.test(t)) return true;
+    // Ordinals such as "45th" or "3rd" are part of street names; any other digits could be a house number
+    if (/\d/.test(t.replace(/\b\d+(?:st|nd|rd|th)\b/gi, ''))) return true;
     return false;
   }
 
@@ -673,7 +717,7 @@
       return;
     }
     const list = alerts
-      .filter((a) => !q || a.location.toLowerCase().includes(q) || (a.zip || '').includes(q))
+      .filter((a) => !q || a.location.toLowerCase().includes(q) || (a.zip || '').includes(q) || (a.street || '').toLowerCase().includes(q))
       .sort((a, b) => b.ts - a.ts);
 
     board.innerHTML = '';
@@ -702,7 +746,8 @@
             <i data-lucide="${a.status === 'Carrier Notified' ? 'bell-ring' : 'clock'}" class="h-3 w-3"></i>${esc(a.status)}
           </span>
         </div>
-        <p class="mt-4 text-sm text-slate-600 leading-relaxed flex-1">${esc(a.desc)}</p>
+        ${a.street ? `<p class="mt-3 flex items-center gap-1.5 text-xs font-medium text-slate-500"><i data-lucide="signpost" class="h-3.5 w-3.5"></i>Near ${esc(a.street)}</p>` : ''}
+        <p class="mt-3 text-sm text-slate-600 leading-relaxed flex-1">${esc(a.desc)}</p>
         <div class="mt-4 flex items-center gap-1.5 text-xs text-slate-400">
           <i data-lucide="clock-3" class="h-3.5 w-3.5"></i><span>${timeAgo(a.ts)}</span>
           <span class="mx-1">·</span><i data-lucide="eye-off" class="h-3.5 w-3.5"></i><span>Anonymous</span>
@@ -879,7 +924,8 @@
   /* ---------- Print driver note ---------- */
   function printDriverNote(a) {
     if (!a) return;
-    $('psWhere').textContent = a.location || (a.zip ? `Zip ${a.zip}` : '');
+    const area = a.location || (a.zip ? `Zip ${a.zip}` : '');
+    $('psWhere').textContent = a.street ? `${area} · near ${a.street}` : area;
     $('psDesc').textContent = a.desc || '';
     $('psDate').textContent = new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
     window.print();
@@ -907,9 +953,9 @@
   searchEl.addEventListener('input', render);
 
   function updateSubmitState() {
-    submitBtn.disabled = !(agreeEl.checked && locationEl.value.trim() && descEl.value.trim());
+    submitBtn.disabled = !(agreeEl.checked && locationEl.value.trim() && streetEl.value.trim() && descEl.value.trim() && trackingEl.value.trim());
   }
-  [locationEl, descEl, agreeEl].forEach((el) => el.addEventListener('input', updateSubmitState));
+  [locationEl, streetEl, descEl, trackingEl, agreeEl].forEach((el) => el.addEventListener('input', updateSubmitState));
   agreeEl.addEventListener('change', updateSubmitState);
   descEl.addEventListener('input', () => { charCount.textContent = `${descEl.value.length}/240`; });
 
@@ -925,31 +971,34 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const loc = locationEl.value.trim();
+    const street = streetEl.value.trim();
     const desc = descEl.value.trim();
+    const rawTracking = trackingEl.value.trim();
 
     if (!agreeEl.checked) { toast('Please confirm the agreement before posting.', 'info'); return; }
-    if (!loc || !desc) { toast('Please fill in both fields.', 'info'); return; }
+    if (!loc || !street || !desc || !rawTracking) { toast('Please fill in every field, including the private tracking number.', 'info'); return; }
 
-    // Guardrail: inspect both fields, block + clear offending ones
+    // Guardrail: inspect the public fields, block + clear offending ones
     const badLoc = violatesPrivacy(loc, { isLocation: true });
+    const badStreet = violatesStreet(street);
     const badDesc = violatesPrivacy(desc);
-    if (badLoc || badDesc) {
+    if (badLoc || badStreet || badDesc) {
       if (badLoc) blockWith(locationEl);
+      if (badStreet) blockWith(streetEl);
       if (badDesc) blockWith(descEl);
       return;
     }
 
-    // Optional private verification: keep only a one-way fingerprint, never the number itself
-    let fp = null;
-    const rawTracking = trackingEl.value.trim();
-    if (rawTracking) {
-      const norm = normalizeTracking(rawTracking);
-      if (!isTrackingFormat(norm)) {
-        toast("That doesn't look like a tracking number. Check it, or leave the private field blank.", 'info');
-        return;
-      }
-      fp = await hashTracking(norm);
-      if (!fp) toast('Secure verification is not available in this browser, so your alert was posted without it.', 'info');
+    // Required private verification: keep only a one-way fingerprint, never the number itself
+    const norm = normalizeTracking(rawTracking);
+    if (!isTrackingFormat(norm)) {
+      toast("That doesn't look like a tracking number. Please check it and try again.", 'info');
+      return;
+    }
+    const fp = await hashTracking(norm);
+    if (!fp) {
+      toast('Secure verification is not available in this browser. Please open the site over https and try again.', 'error');
+      return;
     }
 
     const zip = extractZip(loc);
@@ -957,6 +1006,7 @@
       id: 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       location: zip && loc.replace(zip, '').trim() ? loc : (zip ? `Zip ${zip}` : loc),
       zip: zip,
+      street: street,
       desc: desc,
       fp: fp,
       verified: !!fp,
@@ -971,11 +1021,21 @@
       } catch (err) {
         if (err.privacy) {
           toast(WARNING_MSG, 'error');
-          locationEl.value = ''; descEl.value = ''; charCount.textContent = '0/240';
+          locationEl.value = ''; streetEl.value = ''; descEl.value = ''; charCount.textContent = '0/240';
+        } else if (err.tracking) {
+          toast('A valid tracking number is required to post an alert.', 'error');
+        } else if (err.street) {
+          toast('Please enter a street name (no house number).', 'info');
         } else if (err.rate) {
           toast('The board is very busy right now. Please try again in a minute.', 'info');
+        } else if (err.kind === 'network') {
+          toast("Couldn't reach the server. Check your internet connection and try again.", 'error');
+        } else if (err.auth) {
+          toast("Couldn't post: the site's database key was rejected. (Site owner: check SUPABASE_URL and SUPABASE_ANON_KEY.)", 'error');
+        } else if (err.setup) {
+          toast("Couldn't post: the database setup is out of date. (Site owner: run supabase-setup.sql again.)", 'error');
         } else {
-          toast("Couldn't post your alert. Check your connection and try again.", 'error');
+          toast(`Couldn't post your alert (server error ${err.status || 'unknown'}). Please try again later.`, 'error');
         }
         updateSubmitState();
         return;
