@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/png" href="favicon.png" />
   <script>
     tailwind.config = {
       theme: {
@@ -46,6 +45,14 @@
       mix-blend-mode: multiply;
       border-radius: 1rem;
     }
+    /* Print driver note: hidden on screen, the only thing shown when printing */
+    #printSheet { display: none; }
+    @media print {
+      @page { margin: 0.6in; }
+      html, body { background: #fff !important; background-image: none !important; }
+      body > *:not(#printSheet) { display: none !important; }
+      #printSheet { display: block !important; }
+    }
   </style>
 </head>
 
@@ -61,7 +68,8 @@
         <span class="font-semibold text-white">Legal Safety &amp; Privacy Notice:</span>
         FindMyPackage.tech does <span class="font-semibold text-emerald-300">not store, hold, or facilitate the direct exchange of physical mail or packages</span>.
         This site is purely an <span class="font-semibold text-emerald-300">anonymous neighborhood alert system</span>.
-        We never collect exact addresses, names, or tracking numbers, and we never connect finders with recipients.
+        We never publish exact addresses, names, or tracking numbers, and we never connect finders with recipients.
+        An optional tracking number is never displayed and is kept only as a one-way hash for verification.
         Retrieval happens only through the official carrier.
       </p>
     </div>
@@ -139,6 +147,19 @@
               </div>
             </div>
 
+            <div>
+              <label for="tracking" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                Tracking Number <span class="font-normal text-slate-400">(optional · private)</span>
+              </label>
+              <div class="relative">
+                <i data-lucide="lock-keyhole" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                <input id="tracking" type="text" maxlength="40" autocomplete="off" spellcheck="false"
+                  placeholder="e.g., 1Z… or TBA…"
+                  class="w-full rounded-xl border border-slate-300 bg-white pl-10 pr-3 py-3 text-sm font-mono tracking-wide placeholder-slate-400 placeholder:font-sans placeholder:tracking-normal focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 transition" />
+              </div>
+              <p class="mt-1.5 text-xs text-slate-500">Never shown on the board. Saved only as a one-way fingerprint (hash), not as the number itself. Never type it into the public fields above.</p>
+            </div>
+
             <label class="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 cursor-pointer hover:border-indigo-300 transition has-[:checked]:border-emerald-400 has-[:checked]:bg-emerald-50/60">
               <input id="agree" type="checkbox" class="mt-0.5 h-5 w-5 shrink-0 rounded-md border-slate-300 text-emerald-600 focus:ring-emerald-500 accent-emerald-600" />
               <span class="text-sm text-slate-700 leading-snug">
@@ -154,7 +175,7 @@
 
           <div class="mt-5 flex items-start gap-2 text-xs text-slate-500">
             <i data-lucide="lock" class="h-3.5 w-3.5 mt-0.5 shrink-0 text-slate-400"></i>
-            <p>Posts are screened in your browser for addresses, tracking numbers, and personal names before they are accepted.</p>
+            <p>Public fields are screened in your browser for addresses, tracking numbers, and personal names before they are accepted.</p>
           </div>
         </form>
       </div>
@@ -276,11 +297,154 @@
         <button id="copyBtn" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-500 active:scale-[.99] transition shadow-lg shadow-emerald-600/20">
           <i data-lucide="clipboard-copy" class="h-4 w-4"></i> <span id="copyLabel">Copy to Clipboard</span>
         </button>
-        <a href="https://www.amazon.com/gp/help/customer/contact-us" target="_blank" rel="noopener noreferrer"
+        <a id="noticeLink" href="https://www.amazon.com/gp/help/customer/contact-us" target="_blank" rel="noopener noreferrer"
           class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:border-indigo-400 hover:text-indigo-600 transition">
-          <i data-lucide="external-link" class="h-4 w-4"></i> Open Amazon Support
+          <i data-lucide="external-link" class="h-4 w-4"></i> <span id="noticeLinkLabel">Open Amazon Support</span>
         </a>
       </div>
+
+      <div class="mt-5 pt-5 border-t border-slate-200 flex items-start gap-3">
+        <span class="grid place-items-center h-9 w-9 shrink-0 rounded-xl bg-slate-100 text-slate-600">
+          <i data-lucide="printer" class="h-4 w-4"></i>
+        </span>
+        <div class="flex-1">
+          <p class="text-sm font-semibold text-slate-900">Leave a note for the driver</p>
+          <p class="mt-0.5 text-xs text-slate-500 leading-relaxed">
+            Print a one-page notice asking the driver to scan the package and return it to the correct recipient. Place it beside the package, never over the shipping label, and don't open the package.
+          </p>
+          <button id="printBtn" type="button" class="mt-3 inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:border-indigo-400 hover:text-indigo-600 active:scale-[.99] transition">
+            <i data-lucide="printer" class="h-4 w-4"></i> Print Driver Note
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLAIM MODAL -->
+  <div id="claimModal" class="hidden fixed inset-0 z-50 items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="claimTitle">
+    <div id="claimBackdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+    <div class="modal-enter relative w-full max-w-xl max-h-[92vh] overflow-y-auto bg-white rounded-3xl shadow-2xl p-6 sm:p-7">
+      <button id="claimClose" class="absolute top-4 right-4 p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition" aria-label="Close">
+        <i data-lucide="x" class="h-5 w-5"></i>
+      </button>
+      <div class="flex items-center gap-3 mb-4 pr-8">
+        <span class="grid place-items-center h-10 w-10 rounded-xl bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100">
+          <i data-lucide="badge-check" class="h-5 w-5"></i>
+        </span>
+        <div>
+          <h3 id="claimTitle" class="text-lg font-bold text-slate-900 leading-tight">Is this your package?</h3>
+          <p class="text-xs text-slate-500">Alert near <span id="claimWhere"></span></p>
+        </div>
+      </div>
+
+      <!-- Step 1: verify -->
+      <form id="claimStepVerify" novalidate>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Enter the tracking number from your order confirmation. It is compared with the alert's private fingerprint and is never displayed.
+        </p>
+        <label for="claimTracking" class="block text-sm font-semibold text-slate-700 mt-4 mb-1.5">Your tracking number</label>
+        <div class="relative">
+          <i data-lucide="lock-keyhole" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+          <input id="claimTracking" type="text" maxlength="40" autocomplete="off" spellcheck="false"
+            placeholder="e.g., 1Z… or TBA…"
+            class="w-full rounded-xl border border-slate-300 bg-white pl-10 pr-3 py-3 text-sm font-mono tracking-wide placeholder-slate-400 placeholder:font-sans placeholder:tracking-normal focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 transition" />
+        </div>
+        <p id="claimError" class="hidden mt-2 text-sm text-red-600 font-medium" role="alert"></p>
+        <button type="submit" class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/25 hover:bg-indigo-500 active:scale-[.99] transition">
+          <i data-lucide="badge-check" class="h-4 w-4"></i> Verify it's mine
+        </button>
+      </form>
+
+      <!-- No tracking number on file -->
+      <div id="claimStepNoFp" class="hidden">
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 leading-relaxed">
+          This alert has no private tracking number on file, so ownership can't be verified here. You can still send your carrier a retrieval notice.
+        </div>
+        <button id="claimNoFpNotice" type="button" class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 active:scale-[.99] transition">
+          <i data-lucide="file-text" class="h-4 w-4"></i> Generate Carrier Retrieval Notice
+        </button>
+      </div>
+
+      <!-- Step 2: verified, options -->
+      <div id="claimStepResult" class="hidden">
+        <div class="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+          <i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600 mt-0.5 shrink-0"></i>
+          <div>
+            <p class="text-sm font-semibold text-emerald-900">Tracking number matches this alert.</p>
+            <p id="claimCarrierLine" class="text-xs text-emerald-800 mt-0.5"></p>
+          </div>
+        </div>
+
+        <h4 class="mt-5 text-sm font-bold text-slate-900">Safe, legal ways to get it back</h4>
+        <ol class="mt-3 space-y-3">
+          <li class="rounded-2xl border border-emerald-300 bg-white p-4 ring-1 ring-emerald-100">
+            <div class="flex items-center gap-2">
+              <span class="grid place-items-center h-6 w-6 rounded-full bg-emerald-600 text-white text-xs font-bold">1</span>
+              <p class="text-sm font-semibold text-slate-900">Ask the carrier to retrieve it</p>
+              <span class="ml-auto rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold px-2 py-0.5 ring-1 ring-emerald-200">Recommended</span>
+            </div>
+            <p class="mt-2 text-xs text-slate-600 leading-relaxed">The carrier sends its own courier to collect it from where it was left. You never have to meet anyone.</p>
+            <button id="claimNoticeBtn" type="button" class="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 active:scale-[.99] transition">
+              <i data-lucide="file-text" class="h-4 w-4"></i> Generate Carrier Retrieval Notice
+            </button>
+          </li>
+          <li class="rounded-2xl border border-slate-200 bg-white p-4">
+            <div class="flex items-center gap-2">
+              <span class="grid place-items-center h-6 w-6 rounded-full bg-slate-200 text-slate-700 text-xs font-bold">2</span>
+              <p class="text-sm font-semibold text-slate-900">Request redelivery, a replacement, or a refund</p>
+            </div>
+            <p class="mt-2 text-xs text-slate-600 leading-relaxed">Report the order as misdelivered in your account or with the seller. Many sellers will reship or refund without the original package coming back.</p>
+          </li>
+          <li class="rounded-2xl border border-slate-200 bg-white p-4">
+            <div class="flex items-center gap-2">
+              <span class="grid place-items-center h-6 w-6 rounded-full bg-slate-200 text-slate-700 text-xs font-bold">3</span>
+              <p class="text-sm font-semibold text-slate-900">Report the misdelivery to the carrier</p>
+            </div>
+            <p class="mt-2 text-xs text-slate-600 leading-relaxed">Contact the carrier with your tracking number so it can reroute or recover the package.</p>
+            <div id="claimCarrierLinks" class="mt-3 flex flex-wrap gap-2"></div>
+          </li>
+        </ol>
+
+        <div class="mt-5 rounded-2xl bg-slate-50 border border-slate-200 p-4">
+          <p class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+            <i data-lucide="shield-check" class="h-3.5 w-3.5 text-emerald-600"></i> Keep it safe and legal
+          </p>
+          <ul class="mt-2 space-y-1.5 text-xs text-slate-600 leading-relaxed list-disc pl-4">
+            <li>Don't go looking for the package or approach anyone. Let the carrier handle retrieval.</li>
+            <li>Never enter private property or collect a package from someone else's doorstep or building without the carrier's or the occupant's clear OK.</li>
+            <li>FindMyPackage.tech doesn't connect you with the finder or arrange a handoff. That is what keeps everyone safe.</li>
+            <li>Keep your tracking number out of public posts and messages.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT SHEET (visible only when printing) -->
+  <div id="printSheet" class="p-2 text-black" aria-hidden="true">
+    <div class="border-4 border-black rounded-2xl p-8">
+      <p class="text-sm font-bold tracking-widest uppercase">Notice to delivery driver</p>
+      <h1 class="mt-2 text-5xl font-extrabold leading-tight">Misdelivered package</h1>
+      <p class="mt-4 text-2xl font-semibold leading-snug">Please scan this package and return it to the correct recipient.</p>
+
+      <ol class="mt-8 space-y-4 text-xl leading-snug list-decimal pl-7">
+        <li><span class="font-bold">Scan the label</span> with your handheld scanner to confirm the intended delivery address.</li>
+        <li><span class="font-bold">Collect the package</span> from this location and deliver it to the correct recipient, or take it back to your facility to be re-routed.</li>
+        <li><span class="font-bold">Record the misdelivery</span> in your system so the recipient's order status is updated.</li>
+      </ol>
+
+      <div class="mt-8 rounded-xl border-2 border-black p-5 text-lg">
+        <p><span class="font-bold">General area:</span> <span id="psWhere"></span></p>
+        <p class="mt-2"><span class="font-bold">Package:</span> <span id="psDesc"></span></p>
+        <p class="mt-2"><span class="font-bold">Date noted:</span> <span id="psDate"></span> &nbsp;&nbsp; <span class="font-bold">Time:</span> ____________</p>
+      </div>
+
+      <p class="mt-8 text-base leading-relaxed">
+        This note was left by a neighbor who is <span class="font-bold">not the recipient</span> and is <span class="font-bold">not claiming this package</span>.
+      </p>
+      <p class="mt-6 pt-4 border-t border-black text-xs leading-relaxed">
+        Posted via FindMyPackage.tech, an anonymous neighborhood alert board. We do not hold or handle packages or mail.
+      </p>
     </div>
   </div>
 
@@ -291,8 +455,8 @@
   /* ---------- Config ---------- */
   const STORAGE_KEY = 'fmp_alerts_v2'; // bumped so any earlier sample data is cleared
   const WARNING_MSG = 'For legal and privacy protection, exact addresses, tracking numbers, and personal names are strictly prohibited.';
-  const NOTICE_TEMPLATE = (zip) =>
-    `Hello Amazon Support, an anonymous neighbor has logged my misdelivered package as safely held in Zip Code ${zip}. Please instruct your local delivery courier to retrieve it or update my order status.`;
+  const NOTICE_TEMPLATE = (zip, carrier = 'Amazon') =>
+    `Hello ${carrier} Support, an anonymous neighbor has logged my misdelivered package as safely held in Zip Code ${zip}. Please instruct your local delivery courier to retrieve it or update my order status.`;
 
   /* ---------- Starting data (empty: no sample alerts) ---------- */
   const SEED = [];
@@ -316,6 +480,7 @@
   const $ = (id) => document.getElementById(id);
   const form = $('alertForm'), locationEl = $('location'), descEl = $('description');
   const agreeEl = $('agree'), submitBtn = $('submitBtn'), charCount = $('charCount');
+  const trackingEl = $('tracking');
   const board = $('board'), emptyState = $('emptyState'), resultCount = $('resultCount'), searchEl = $('search');
   const modal = $('modal'), noticeText = $('noticeText'), copyBtn = $('copyBtn'), copyLabel = $('copyLabel');
 
@@ -378,6 +543,18 @@
       if (looksLikePersonName(t)) return true;
     }
     return false;
+  }
+
+  /* ---------- Private tracking verification ---------- */
+  function normalizeTracking(s) { return (s || '').toUpperCase().replace(/[\s-]/g, ''); }
+  function isTrackingFormat(n) { return /^[A-Z0-9]{8,35}$/.test(n) && /\d/.test(n); }
+  // One-way SHA-256 fingerprint. The plain number is never stored or displayed.
+  async function hashTracking(n) {
+    try {
+      if (!(window.crypto && crypto.subtle)) return null;
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('fmp-v1:' + n));
+      return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+    } catch (_) { return null; }
   }
 
   /* ---------- Toasts ---------- */
@@ -463,9 +640,13 @@
         <div class="mt-4 flex items-center gap-1.5 text-xs text-slate-400">
           <i data-lucide="clock-3" class="h-3.5 w-3.5"></i><span>${timeAgo(a.ts)}</span>
           <span class="mx-1">·</span><i data-lucide="eye-off" class="h-3.5 w-3.5"></i><span>Anonymous</span>
+          ${a.verified ? '<span class="ml-auto inline-flex items-center gap-1 font-semibold text-emerald-600"><i data-lucide="shield-check" class="h-3.5 w-3.5"></i>Tracking verified</span>' : ''}
         </div>
         <button data-id="${esc(a.id)}" class="notice-btn mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 active:scale-[.99] transition">
           <i data-lucide="file-text" class="h-4 w-4"></i> Generate Carrier Retrieval Notice
+        </button>
+        <button data-id="${esc(a.id)}" class="claim-btn mt-2 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-2.5 text-sm font-semibold text-indigo-700 hover:bg-indigo-100 active:scale-[.99] transition">
+          <i data-lucide="badge-check" class="h-4 w-4"></i> This is my package
         </button>`;
       board.appendChild(card);
     });
@@ -473,10 +654,13 @@
   }
 
   /* ---------- Modal ---------- */
-  function openModal(alertObj) {
+  function openModal(alertObj, carrierKey = 'amazon') {
     activeAlert = alertObj;
+    const c = CARRIERS[carrierKey] || CARRIERS.amazon;
     const zip = alertObj.zip || extractZip(alertObj.location) || alertObj.location;
-    noticeText.value = NOTICE_TEMPLATE(zip);
+    noticeText.value = NOTICE_TEMPLATE(zip, c.name);
+    $('noticeLink').href = c.url;
+    $('noticeLinkLabel').textContent = `Open ${c.name} Support`;
     copyLabel.textContent = 'Copy to Clipboard';
     modal.classList.remove('hidden'); modal.classList.add('flex');
     document.body.style.overflow = 'hidden';
@@ -503,8 +687,136 @@
     }
   }
 
+  /* ---------- Claim & verify ---------- */
+  const CARRIERS = {
+    amazon: { name: 'Amazon', url: 'https://www.amazon.com/gp/help/customer/contact-us', label: 'Amazon Customer Service' },
+    ups:    { name: 'UPS',    url: 'https://www.ups.com/us/en/support.page',              label: 'UPS Support' },
+    fedex:  { name: 'FedEx',  url: 'https://www.fedex.com/en-us/customer-support.html',   label: 'FedEx Support' },
+    usps:   { name: 'USPS',   url: 'https://www.usps.com/help/missing-mail.htm',          label: 'USPS Missing Mail' },
+  };
+  function detectCarrier(n) {
+    if (/^1Z/.test(n)) return 'ups';
+    if (/^TB[ACM]/.test(n)) return 'amazon';
+    if (/^(?:9[2-5]|82|70|23|03)\d{18,20}$/.test(n) || /^[A-Z]{2}\d{9}US$/.test(n)) return 'usps';
+    if (/^(?:\d{12}|\d{15})$/.test(n)) return 'fedex';
+    return null;
+  }
+
+  // Attempt limiter (client-side convenience only; a real limiter must live on the server)
+  const CLAIM_KEY = 'fmp_claim_attempts_v1', MAX_TRIES = 5, LOCK_MS = 15 * 60 * 1000;
+  function getAttempts() { try { return JSON.parse(localStorage.getItem(CLAIM_KEY)) || {}; } catch (_) { return {}; } }
+  function setAttempts(o) { try { localStorage.setItem(CLAIM_KEY, JSON.stringify(o)); } catch (_) { /* ignore */ } }
+  function lockRemaining(id) { const a = getAttempts()[id]; return a && a.until && a.until > Date.now() ? a.until - Date.now() : 0; }
+  function recordFail(id) {
+    const all = getAttempts();
+    const a = all[id] || { n: 0, until: 0 };
+    if (a.until && a.until <= Date.now()) { a.n = 0; a.until = 0; }
+    a.n += 1;
+    if (a.n >= MAX_TRIES) { a.until = Date.now() + LOCK_MS; a.n = 0; }
+    all[id] = a; setAttempts(all);
+    return a;
+  }
+  function clearAttempts(id) { const all = getAttempts(); delete all[id]; setAttempts(all); }
+
+  const claimModal = $('claimModal'), claimForm = $('claimStepVerify');
+  const claimTracking = $('claimTracking'), claimError = $('claimError');
+  let claimAlert = null, claimCarrier = null;
+
+  function showClaimStep(id) {
+    ['claimStepVerify', 'claimStepNoFp', 'claimStepResult'].forEach((s) => $(s).classList.toggle('hidden', s !== id));
+  }
+  function showClaimError(msg) {
+    claimError.textContent = msg;
+    claimError.classList.remove('hidden');
+    claimTracking.classList.add('border-red-400');
+  }
+  function openClaim(a) {
+    claimAlert = a; claimCarrier = null;
+    claimTracking.value = '';
+    claimError.classList.add('hidden');
+    claimTracking.classList.remove('border-red-400');
+    $('claimWhere').textContent = a.location;
+    showClaimStep(a.fp ? 'claimStepVerify' : 'claimStepNoFp');
+    claimModal.classList.remove('hidden'); claimModal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    if (a.fp) claimTracking.focus();
+  }
+  function closeClaim() {
+    claimModal.classList.add('hidden'); claimModal.classList.remove('flex');
+    document.body.style.overflow = '';
+    claimTracking.value = '';
+    claimAlert = null; claimCarrier = null;
+  }
+  function renderClaimResult(norm) {
+    claimCarrier = detectCarrier(norm);
+    $('claimCarrierLine').textContent = claimCarrier
+      ? `This looks like a ${CARRIERS[claimCarrier].name} shipment.`
+      : 'Carrier not detected from the number. Use the carrier named on your order.';
+    const keys = claimCarrier ? [claimCarrier] : Object.keys(CARRIERS);
+    $('claimCarrierLinks').innerHTML = keys.map((k) =>
+      `<a href="${CARRIERS[k].url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:border-indigo-400 hover:text-indigo-600 transition">
+        <i data-lucide="external-link" class="h-3.5 w-3.5"></i>${CARRIERS[k].label}</a>`).join('');
+    showClaimStep('claimStepResult');
+    lucide.createIcons();
+  }
+
+  claimForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!claimAlert) return;
+    claimError.classList.add('hidden');
+    claimTracking.classList.remove('border-red-400');
+
+    const wait = lockRemaining(claimAlert.id);
+    if (wait) { showClaimError(`Too many attempts. Try again in ${Math.ceil(wait / 60000)} min.`); return; }
+
+    const norm = normalizeTracking(claimTracking.value);
+    if (!isTrackingFormat(norm)) { showClaimError('Enter the tracking number exactly as it appears in your order confirmation.'); return; }
+
+    const h = await hashTracking(norm);
+    if (!h) { showClaimError('Secure verification is not available in this browser. Open the site over https, or use the carrier retrieval notice instead.'); return; }
+
+    if (h === claimAlert.fp) {
+      clearAttempts(claimAlert.id);
+      claimTracking.value = '';
+      renderClaimResult(norm);
+    } else {
+      const a = recordFail(claimAlert.id);
+      showClaimError("That tracking number doesn't match this alert." + (a.until ? ' Too many attempts, so verification is locked for 15 minutes.' : ''));
+    }
+  });
+
+  $('claimNoticeBtn').addEventListener('click', () => {
+    const a = claimAlert, key = claimCarrier || 'amazon';
+    if (!a) return;
+    closeClaim(); openModal(a, key);
+  });
+  $('claimNoFpNotice').addEventListener('click', () => {
+    const a = claimAlert;
+    if (!a) return;
+    closeClaim(); openModal(a);
+  });
+  $('claimClose').addEventListener('click', closeClaim);
+  $('claimBackdrop').addEventListener('click', closeClaim);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !claimModal.classList.contains('hidden')) closeClaim(); });
+
+  /* ---------- Print driver note ---------- */
+  function printDriverNote(a) {
+    if (!a) return;
+    $('psWhere').textContent = a.location || (a.zip ? `Zip ${a.zip}` : '');
+    $('psDesc').textContent = a.desc || '';
+    $('psDate').textContent = new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    window.print();
+  }
+  $('printBtn').addEventListener('click', () => printDriverNote(activeAlert));
+
   /* ---------- Events ---------- */
   board.addEventListener('click', (e) => {
+    const claimBtn = e.target.closest('.claim-btn');
+    if (claimBtn) {
+      const f = alerts.find((a) => a.id === claimBtn.dataset.id);
+      if (f) openClaim(f);
+      return;
+    }
     const btn = e.target.closest('.notice-btn');
     if (!btn) return;
     const found = alerts.find((a) => a.id === btn.dataset.id);
@@ -533,7 +845,7 @@
     updateSubmitState();
   }
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const loc = locationEl.value.trim();
     const desc = descEl.value.trim();
@@ -550,12 +862,27 @@
       return;
     }
 
+    // Optional private verification: keep only a one-way fingerprint, never the number itself
+    let fp = null;
+    const rawTracking = trackingEl.value.trim();
+    if (rawTracking) {
+      const norm = normalizeTracking(rawTracking);
+      if (!isTrackingFormat(norm)) {
+        toast("That doesn't look like a tracking number. Check it, or leave the private field blank.", 'info');
+        return;
+      }
+      fp = await hashTracking(norm);
+      if (!fp) toast('Secure verification is not available in this browser, so your alert was posted without it.', 'info');
+    }
+
     const zip = extractZip(loc);
     const entry = {
       id: 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       location: zip && loc.replace(zip, '').trim() ? loc : (zip ? `Zip ${zip}` : loc),
       zip: zip,
       desc: desc,
+      fp: fp,
+      verified: !!fp,
       status: 'Awaiting Carrier Retrieval',
       ts: Date.now(),
     };
