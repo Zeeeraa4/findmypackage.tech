@@ -80,7 +80,7 @@
   </main>
 
   <script>
-    // The only line you edit: your Supabase project ref (Project Settings -> General -> Reference ID).
+    // Your Supabase Edge Function URL. The function must be named exactly "api".
     const API_BASE = 'https://xqqoymwsamdfpozuphze.supabase.co/functions/v1/api';
 
     async function post(url, payload) {
@@ -91,6 +91,7 @@
       });
       let data = {};
       try { data = await res.json(); } catch (_) {}
+      if (res.status === 404 && !data.error) throw new Error('Backend not found. In Supabase, the Edge Function must be named exactly "api" and deployed.');
       if (!res.ok) throw new Error(data.error || 'Something went wrong. Try again.');
       return data;
     }
@@ -122,8 +123,9 @@
       });
     }
 
-    wire('subscribe-form', 'subscribe-status', API_BASE + '/subscribe',
+    wire('subscribe-form', 'subscribe-status', API_BASE,
       () => ({
+        action: 'subscribe',
         email: document.getElementById('sub-email').value,
         locationKey: document.getElementById('sub-key').value,
       }),
@@ -131,8 +133,9 @@
       () => { document.getElementById('sub-email').value = ''; }
     );
 
-    wire('broadcast-form', 'broadcast-status', API_BASE + '/broadcast',
+    wire('broadcast-form', 'broadcast-status', API_BASE,
       () => ({
+        action: 'broadcast',
         locationKey: document.getElementById('bc-key').value,
         description: document.getElementById('bc-desc').value,
       }),
