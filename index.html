@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-slate-950">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>findmypackage.tech – neighborhood package theft alerts</title>
+  <meta name="description" content="Join your block's anti-theft mesh. Spot a porch pirate, warn every neighbor in seconds.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-300 antialiased">
+  <main class="mx-auto max-w-4xl px-5 py-12 sm:py-20">
+
+    <header class="mb-12 max-w-2xl">
+      <h1 class="text-3xl font-bold tracking-tight text-slate-50 sm:text-5xl">findmy<span class="text-rose-500">package</span>.tech</h1>
+      <p class="mt-4 text-base leading-relaxed text-slate-400 sm:text-lg">
+        Your block, wired together. Join your zone to get alerts, or warn every neighbor the moment you see a thief.
+      </p>
+    </header>
+
+    <div class="grid gap-6 md:grid-cols-2">
+
+      <!-- Card 1: subscribe -->
+      <section class="rounded-xl border border-slate-800 bg-slate-900/60 p-6">
+        <h2 class="text-xl font-semibold text-slate-50">Secure Your Zone</h2>
+        <p class="mt-1 text-sm text-slate-400">Get an email when a neighbor reports a porch pirate nearby.</p>
+
+        <form id="subscribe-form" class="mt-6 space-y-4" novalidate>
+          <div>
+            <label for="sub-email" class="mb-1.5 block text-sm font-medium text-slate-200">Email</label>
+            <input id="sub-email" type="email" required autocomplete="email" placeholder="you@example.com"
+              class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
+          </div>
+          <div>
+            <label for="sub-key" class="mb-1.5 block text-sm font-medium text-slate-200">Location key</label>
+            <input id="sub-key" type="text" required maxlength="64" placeholder="98105 or UW-Lander-Hall"
+              class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
+            <p class="mt-1.5 text-xs text-slate-500">A zip code or dorm name. Everyone who enters the same key is in the same zone.</p>
+          </div>
+          <button type="submit"
+            class="w-full rounded-lg border border-slate-600 bg-slate-800 px-4 py-2.5 font-semibold text-slate-50 transition hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 disabled:cursor-not-allowed disabled:opacity-50">
+            Join this zone
+          </button>
+          <p id="subscribe-status" role="status" aria-live="polite" class="min-h-[1.25rem] text-sm"></p>
+        </form>
+      </section>
+
+      <!-- Card 2: broadcast -->
+      <section class="rounded-xl border border-rose-500/40 bg-slate-900/60 p-6 shadow-[0_0_40px_-12px] shadow-rose-500/30">
+        <h2 class="text-xl font-semibold text-rose-400">Trigger Flash Alert</h2>
+        <p class="mt-1 text-sm text-slate-400">See someone taking packages? Email everyone in the zone right now.</p>
+
+        <form id="broadcast-form" class="mt-6 space-y-4" novalidate>
+          <div>
+            <label for="bc-key" class="mb-1.5 block text-sm font-medium text-slate-200">Location key</label>
+            <input id="bc-key" type="text" required maxlength="64" placeholder="98105 or UW-Lander-Hall"
+              class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
+          </div>
+          <div>
+            <label for="bc-desc" class="mb-1.5 block text-sm font-medium text-slate-200">What did you see? <span class="font-normal text-slate-500">(optional)</span></label>
+            <textarea id="bc-desc" rows="3" maxlength="500" placeholder="Person in a gray hoodie, silver sedan, heading north on 15th Ave"
+              class="w-full resize-none rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30"></textarea>
+          </div>
+          <button type="submit"
+            class="w-full rounded-lg bg-rose-500 px-4 py-2.5 font-bold text-white transition hover:bg-rose-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-50">
+            Broadcast Warning
+          </button>
+          <p id="broadcast-status" role="status" aria-live="polite" class="min-h-[1.25rem] text-sm"></p>
+        </form>
+      </section>
+    </div>
+
+    <footer class="mt-12 text-xs text-slate-600">
+      Only report what you actually saw. Emergencies: call 911.
+    </footer>
+  </main>
+
+  <script>
+    // The only line you edit: your Supabase project ref (Project Settings -> General -> Reference ID).
+    const API_BASE = 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/api';
+
+    async function post(url, payload) {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      let data = {};
+      try { data = await res.json(); } catch (_) {}
+      if (!res.ok) throw new Error(data.error || 'Something went wrong. Try again.');
+      return data;
+    }
+
+    function wire(formId, statusId, url, getPayload, busyText, onSuccess) {
+      const form = document.getElementById(formId);
+      const status = document.getElementById(statusId);
+      const button = form.querySelector('button[type="submit"]');
+      const label = button.textContent;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        status.textContent = '';
+        status.className = 'min-h-[1.25rem] text-sm';
+        button.disabled = true;
+        button.textContent = busyText;
+        try {
+          const data = await post(url, getPayload());
+          status.textContent = data.message;
+          status.className = 'min-h-[1.25rem] text-sm text-emerald-400';
+          onSuccess();
+        } catch (err) {
+          status.textContent = err.message;
+          status.className = 'min-h-[1.25rem] text-sm text-rose-400';
+        } finally {
+          button.disabled = false;
+          button.textContent = label;
+        }
+      });
+    }
+
+    wire('subscribe-form', 'subscribe-status', API_BASE + '/subscribe',
+      () => ({
+        email: document.getElementById('sub-email').value,
+        locationKey: document.getElementById('sub-key').value,
+      }),
+      'Joining…',
+      () => { document.getElementById('sub-email').value = ''; }
+    );
+
+    wire('broadcast-form', 'broadcast-status', API_BASE + '/broadcast',
+      () => ({
+        locationKey: document.getElementById('bc-key').value,
+        description: document.getElementById('bc-desc').value,
+      }),
+      'Sending alert…',
+      () => { document.getElementById('bc-desc').value = ''; }
+    );
+  </script>
+</body>
+</html>
