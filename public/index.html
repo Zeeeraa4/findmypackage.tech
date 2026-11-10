@@ -1,28 +1,173 @@
-self.addEventListener('push', function (event) {
-  let data = { title: '⚠️ PORCH PIRATE ALERT ⚠️', body: 'Suspicious parcel activity reported in your complex.' };
-  try {
-    if (event.data) {
-      const json = event.data.json();
-      data.title = json.title || data.title;
-      data.body = `${json.buildingName} • ${json.incidentLocation}\nSuspect: ${json.details}`;
-      data.buildingId = json.buildingId;
-    }
-  } catch (e) {
-    if (event.data) data.body = event.data.text();
-  }
-  event.waitUntil(self.registration.showNotification(data.title, {
-    body: data.body,
-    icon: '/favicon.ico',
-    data: { buildingId: data.buildingId }
-  }));
-});
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#991B1B" />
+    <title>Find My Package - Porch Pirate Alert</title>
+    <link rel="manifest" href="/public/manifest.json" />
+    
+    <!-- React, Babel, and Tailwind CDN Hooks -->
+    <script src="https://unpkg.com" crossorigin></script>
+    <script src="https://unpkg.com" crossorigin></script>
+    <script src="https://unpkg.com"></script>
+    <script src="https://tailwindcss.com"></script>
+    
+    <!-- Supabase CDN Link -->
+    <script src="https://unpkg.com"></script>
+  </head>
+  <body class="bg-zinc-950 text-zinc-100 min-h-screen">
+    <div id="root"></div>
 
-self.addEventListener('notificationclick', function (event) {
-  event.notification.close();
-  const bId = event.notification.data?.buildingId;
-  const targetUrl = bId ? `https://findmypackage.tech{bId}` : 'https://findmypackage.tech';
-  event.waitUntil(clients.matchAll({ type: 'window' }).then(function (list) {
-    for (let client of list) { if (client.url === targetUrl && 'focus' in client) return client.focus(); }
-    if (clients.openWindow) return clients.openWindow(targetUrl);
-  }));
-});
+    <!-- Live Unified Application Engine -->
+    <script type="text/babel">
+      // 1. Initialize Supabase directly inside the landing page using your credentials
+      const supabaseUrl = "YOUR_SUPABASE_PROJECT_URL_HERE"; 
+      const supabaseAnonKey = "YOUR_SUPABASE_ANON_PUBLIC_KEY_HERE";
+      const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+      const CONSENT_TEXT = 'I consent to receive high-urgency SMS alerts from Find My Package / Porch Pirate Alert regarding security incidents in my building. Message frequency varies. Msg & data rates may apply. Reply STOP to opt-out at any time.';
+
+      function timeAgo(iso, now) {
+        const s = Math.max(0, Math.floor((now - new Date(iso).getTime()) / 1000));
+        if (s < 60) return 'just now';
+        const m = Math.floor(s / 60);
+        return m < 60 ? `${m}m ago` : `${Math.floor(m/60)}h ago`;
+      }
+
+      function App() {
+        const [session, setSession] = React.useState(null);
+        const [profile, setProfile] = React.useState(null);
+        const [building, setBuilding] = React.useState(null);
+        const [alerts, setAlerts] = React.useState([]);
+        const [now, setNow] = React.useState(Date.now());
+        const [showForm, setShowForm] = React.useState(false);
+        const [form, setForm] = React.useState({ location: '', suspect: '' });
+        const [submitting, setSubmitting] = React.useState(false);
+        const [joinCode, setJoinCode] = React.useState('');
+        const [error, setError] = React.useState('');
+        const [settingsOpen, setSettingsOpen] = React.useState(false);
+        const [phoneInput, setPhoneInput] = React.useState('');
+        const [consent, setConsent] = React.useState(false);
+        const [savingPhone, setSavingPhone] = React.useState(false);
+        const [phoneMsg, setPhoneMsg] = React.useState({ type: '', text: '' });
+
+        React.useEffect(() => {
+          supabase.auth.getSession().then(({ data }) => setSession(data.session));
+          const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+          return () => sub.subscription.unsubscribe();
+        }, []);
+
+        const loadProfile = React.useCallback(async () => {
+          if (!session) return;
+          const { data: p } = await supabase.from('users').select('*').eq('id', session.user.id).maybeSingle();
+          setProfile(p);
+          setPhoneInput(p?.phone_number || '');
+          
+          // Check URL hash fallback for buildingId or profile default
+          const hashPath = window.location.hash;
+          const match = hashPath.match(/#\/building\/(.+)/);
+          const bid = (match ? match[1] : null) || p?.building_id;
+          
+          if (bid) {
+            const { data: b } = await supabase.from('buildings').select('id,name,street_address').eq('id', bid).maybeSingle();
+            setBuilding(b);
+          }
+        }, [session]);
+
+        React.useEffect(() => { loadProfile(); }, [loadProfile]);
+
+        React.useEffect(() => {
+          const hashPath = window.location.hash;
+          const match = hashPath.match(/#\/building\/(.+)/);
+          const bid = (match ? match[1] : null) || profile?.building_id;
+          if (!bid) return;
+
+          supabase.from('alerts').select('*').eq('building_id', bid).order('created_at', { ascending: false }).then(({ data }) => setAlerts(data || []));
+          
+          const channel = supabase.channel(`alerts:${bid}`).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'alerts', filter: `building_id=eq.${bid}` }, (payload) => {
+            setAlerts((prev) => prev.some((a) => a.id === payload.new.id) ? prev : [payload.new, ...prev]);
+          }).subscribe();
+          
+          const t = setInterval(() => setNow(Date.now()), 30000);
+          return () => { supabase.removeChannel(channel); clearInterval(t); };
+        }, [profile?.building_id, window.location.hash]);
+
+        async function handleSavePhone(e) {
+          e.preventDefault(); setSavingPhone(true); setPhoneMsg({ type: '', text: '' });
+          try {
+            await supabase.rpc('save_sms_consent', { p_phone: phoneInput.trim(), p_consent: consent });
+            setPhoneMsg({ type: 'success', text: 'Phone profile locked.' }); loadProfile();
+          } catch (err) { setPhoneMsg({ type: 'error', text: err.message }); } finally { setSavingPhone(false); }
+        }
+
+        async function handleJoin(e) {
+          e.preventDefault(); setError('');
+          const { data: b } = await supabase.from('buildings').select('id').eq('id', joinCode.trim()).maybeSingle();
+          if (!b) { setError('Invalid security node key.'); return; }
+          await supabase.from('users').update({ building_id: b.id }).eq('id', session.user.id);
+          loadProfile();
+        }
+
+        async function handleSubmit(e) {
+          e.preventDefault(); setSubmitting(true); setError('');
+          const hashPath = window.location.hash;
+          const match = hashPath.match(/#\/building\/(.+)/);
+          const bid = (match ? match[1] : null) || profile.building_id;
+          
+          const { error: err } = await supabase.from('alerts').insert({ building_id: bid, reporter_id: session.user.id, incident_location: form.location.trim(), suspect_description: form.suspect.trim() });
+          setSubmitting(false);
+          if (err) return setError(err.message); 
+          setForm({ location: '', suspect: '' }); setShowForm(false);
+        }
+
+        if (!session) {
+          return (
+            <div className="flex flex-col items-center justify-center min-h-screen p-4">
+              <h1 className="text-xl font-black mb-4">FIND MY PACKAGE</h1>
+              <button onClick={() => supabase.auth.signInWithOAuth({ provider: 'google' })} className="bg-zinc-900 border border-zinc-800 px-6 py-3 rounded-xl hover:bg-zinc-800 transition font-bold text-white">Sign In with Google</button>
+            </div>
+          );
+        }
+
+        const hashPath = window.location.hash;
+        const match = hashPath.match(/#\/building\/(.+)/);
+        const targetBid = (match ? match[1] : null) || profile?.building_id;
+
+        if (profile && !targetBid) {
+          return (
+            <div className="max-w-md mx-auto p-6 bg-zinc-900 border border-zinc-800 rounded-xl mt-20">
+              <form onSubmit={handleJoin} className="space-y-4">
+                <h2 className="text-lg font-bold">Join Your Building Node</h2>
+                <input value={joinCode} onChange={(e) => setJoinCode(e.target.value)} placeholder="Building security hash" className="w-full font-mono bg-zinc-950 border border-zinc-800 px-4 py-3 rounded-lg text-sm outline-none focus:border-red-800 text-white" />
+                {error && <p className="text-xs text-red-400">{error}</p>}
+                <button type="submit" className="w-full bg-red-800 py-3 rounded-lg font-bold hover:bg-red-700 text-white">Link Complex</button>
+              </form>
+            </div>
+          );
+        }
+
+        return (
+          <div className="max-w-md mx-auto p-4 sm:p-6 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl mt-6">
+            <div className="flex justify-between items-center border-b border-zinc-800 pb-3 mb-4">
+              <div>
+                <h1 className="text-lg font-black tracking-tight text-white">FIND MY PACKAGE</h1>
+                <p className="text-xs font-bold text-red-500 uppercase tracking-widest flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Radar Live</p>
+              </div>
+              <button onClick={() => setSettingsOpen(!settingsOpen)} className="text-xs bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-lg text-zinc-400">{settingsOpen ? 'Close' : '⚙️ Setup'}</button>
+            </div>
+
+            {settingsOpen && (
+              <form onSubmit={handleSavePhone} className="bg-zinc-950 border border-zinc-800 rounded-lg p-4 mb-4 space-y-3">
+                <h3 className="text-xs font-bold text-zinc-300">Carrier Compliance Profile</h3>
+                <input type="tel" placeholder="+12065551234" value={phoneInput} onChange={(e) => setPhoneInput(e.target.value)} className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-mono outline-none text-zinc-100" />
+                <label className="flex gap-2 items-start text-[10px] text-zinc-400 select-none">
+                  <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5" />
+                  <span>{CONSENT_TEXT}</span>
+                </label>
+                {phoneMsg.text && <p className={`text-xs ${phoneMsg.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>{phoneMsg.text}</p>}
+                <button type="submit" className="w-full bg-zinc-800 py-2 rounded text-xs font-bold text-white hover:bg-zinc-700 transition">{savingPhone ? 'Locking...' : 'Save Phone Configuration'}</button>
+              </form>
+            )}
+
+            <div className="bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-xs mb-4">
