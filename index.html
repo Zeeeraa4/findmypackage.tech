@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>findmypackage.tech – neighborhood package theft alerts</title>
   <meta name="description" content="Join your block's anti-theft mesh. Spot a porch pirate, warn every neighbor in seconds.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://w3.org' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <script src="https://tailwindcss.com"></script>
   <style>
     body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -80,8 +80,7 @@
   </main>
 
   <script>
-    // The only line you edit: your Supabase project ref (Project Settings -> General -> Reference ID).
-    const API_BASE = 'https://xqqoymwsamdfpozuphze.supabase.co/functions/v1/api';
+    const API_BASE = 'https://supabase.co';
 
     async function post(url, payload) {
       const res = await fetch(url, {
@@ -95,7 +94,7 @@
       return data;
     }
 
-    function wire(formId, statusId, url, getPayload, busyText, onSuccess) {
+    function wire(formId, statusId, url, getPayload, busyText, fallbackSuccessMsg, onSuccess) {
       const form = document.getElementById(formId);
       const status = document.getElementById(statusId);
       const button = form.querySelector('button[type="submit"]');
@@ -109,7 +108,7 @@
         button.textContent = busyText;
         try {
           const data = await post(url, getPayload());
-          status.textContent = data.message;
+          status.textContent = data.message || fallbackSuccessMsg;
           status.className = 'min-h-[1.25rem] text-sm text-emerald-400';
           onSuccess();
         } catch (err) {
@@ -125,20 +124,23 @@
     wire('subscribe-form', 'subscribe-status', API_BASE + '/subscribe',
       () => ({
         email: document.getElementById('sub-email').value,
-        locationKey: document.getElementById('sub-key').value,
+        location_key: document.getElementById('sub-key').value,
       }),
       'Joining…',
+      '✓ Linked into the watch node grid!',
       () => { document.getElementById('sub-email').value = ''; }
     );
 
     wire('broadcast-form', 'broadcast-status', API_BASE + '/broadcast',
       () => ({
-        locationKey: document.getElementById('bc-key').value,
+        location_key: document.getElementById('bc-key').value,
         description: document.getElementById('bc-desc').value,
       }),
       'Sending alert…',
+      '🚨 Broadcast processed! Target addresses notified.',
       () => { document.getElementById('bc-desc').value = ''; }
     );
   </script>
 </body>
 </html>
+
