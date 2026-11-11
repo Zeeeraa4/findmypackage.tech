@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>findmypackage.tech – dorm &amp; apartment package theft alerts</title>
-  <meta name="description" content="Join your building's anti-theft mesh. Spot a porch pirate, warn every neighbor in seconds—no camera or app required.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://w3.org' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
-  <script src="https://tailwindcss.com"></script>
+  <title>findmypackage.tech – neighborhood package theft alerts</title>
+  <meta name="description" content="Join your block's anti-theft mesh. Spot a porch pirate, warn every neighbor in seconds.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <style>
     body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -18,7 +18,7 @@
     <header class="mb-12 max-w-2xl">
       <h1 class="text-3xl font-bold tracking-tight text-slate-50 sm:text-5xl">findmy<span class="text-rose-500">package</span>.tech</h1>
       <p class="mt-4 text-base leading-relaxed text-slate-400 sm:text-lg">
-        Your dorm, apartment, or block—wired together. Get instant email warnings when a thief is spotted nearby, with no camera or app download required.
+        Your block, wired together. Join your zone to get alerts, or warn every neighbor the moment you see a thief.
       </p>
     </header>
 
@@ -39,7 +39,7 @@
             <label for="sub-key" class="mb-1.5 block text-sm font-medium text-slate-200">Location key</label>
             <input id="sub-key" type="text" required maxlength="64" placeholder="98105 or UW-Lander-Hall"
               class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
-            <p class="mt-1.5 text-xs text-slate-500">A zip code, apartment building, or dorm name. Everyone who enters the same key is in the same zone.</p>
+            <p class="mt-1.5 text-xs text-slate-500">A zip code or dorm name. Everyone who enters the same key is in the same zone.</p>
           </div>
           <button type="submit"
             class="w-full rounded-lg border border-slate-600 bg-slate-800 px-4 py-2.5 font-semibold text-slate-50 transition hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 disabled:cursor-not-allowed disabled:opacity-50">
@@ -65,13 +65,6 @@
             <textarea id="bc-desc" rows="3" maxlength="500" placeholder="Person in a gray hoodie, silver sedan, heading north on 15th Ave"
               class="w-full resize-none rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30"></textarea>
           </div>
-
-          <!-- Mandatory Safety Agreement -->
-          <label class="flex items-start gap-2.5 text-xs leading-relaxed text-slate-400 cursor-pointer">
-            <input id="bc-safety" type="checkbox" required class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-rose-500 focus:ring-rose-500">
-            <span>I am reporting a truthful, first-hand observation. I will <strong>not</strong> confront, follow, or intervene with any suspect, and I will contact 911 or Campus Security for active crimes.</span>
-          </label>
-
           <button type="submit"
             class="w-full rounded-lg bg-rose-500 px-4 py-2.5 font-bold text-white transition hover:bg-rose-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-50">
             Broadcast Warning
@@ -81,14 +74,14 @@
       </section>
     </div>
 
-    <footer class="mt-12 space-y-2 border-t border-slate-800/80 pt-6 text-xs leading-relaxed text-slate-500">
-      <p><strong class="text-slate-400">Safety Notice:</strong> Never confront, chase, or attempt to detain anyone taking packages. Stay inside, keep doors locked, and call 911 or Campus Security immediately.</p>
-      <p><strong class="text-slate-400">Disclaimer:</strong> findmypackage.tech is a community notification tool only and is not affiliated with law enforcement or university housing. Alerts are user-submitted and unverified. By using this site, you agree to report only accurate, good-faith observations and accept full responsibility for your own actions.</p>
+    <footer class="mt-12 text-xs text-slate-600">
+      Only report what you actually saw. Emergencies: call 911.
     </footer>
   </main>
 
   <script>
-    const API_BASE = 'https://supabase.co';
+    // Your Supabase Edge Function URL. The function must be named exactly "api".
+    const API_BASE = 'https://xqqoymwsamdfpozuphze.supabase.co/functions/v1/api';
 
     async function post(url, payload) {
       const res = await fetch(url, {
@@ -103,7 +96,7 @@
       return data;
     }
 
-    function wire(formId, statusId, url, getPayload, busyText, onSuccess, validateBefore) {
+    function wire(formId, statusId, url, getPayload, busyText, onSuccess) {
       const form = document.getElementById(formId);
       const status = document.getElementById(statusId);
       const button = form.querySelector('button[type="submit"]');
@@ -113,16 +106,6 @@
         e.preventDefault();
         status.textContent = '';
         status.className = 'min-h-[1.25rem] text-sm';
-
-        if (validateBefore) {
-          const checkErr = validateBefore();
-          if (checkErr) {
-            status.textContent = checkErr;
-            status.className = 'min-h-[1.25rem] text-sm text-rose-400';
-            return;
-          }
-        }
-
         button.disabled = true;
         button.textContent = busyText;
         try {
@@ -157,16 +140,7 @@
         description: document.getElementById('bc-desc').value,
       }),
       'Sending alert…',
-      () => {
-        document.getElementById('bc-desc').value = '';
-        document.getElementById('bc-safety').checked = false;
-      },
-      () => {
-        if (!document.getElementById('bc-safety').checked) {
-          return 'Please check the safety box confirming you will not confront anyone.';
-        }
-        return null;
-      }
+      () => { document.getElementById('bc-desc').value = ''; }
     );
   </script>
 </body>
