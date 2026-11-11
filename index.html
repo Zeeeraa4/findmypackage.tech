@@ -65,6 +65,10 @@
             <textarea id="bc-desc" rows="3" maxlength="500" placeholder="Person in a gray hoodie, silver sedan, heading north on 15th Ave"
               class="w-full resize-none rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30"></textarea>
           </div>
+          <label class="flex items-start gap-2.5 text-xs text-slate-400 cursor-pointer">
+            <input id="bc-safety" type="checkbox" required class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-rose-500">
+            <span>I am reporting a truthful, first-hand observation. I will <strong>not</strong> confront, follow, or intervene with any suspect, and I will call 911 or Campus Security for active crimes.</span>
+          </label>
           <button type="submit"
             class="w-full rounded-lg bg-rose-500 px-4 py-2.5 font-bold text-white transition hover:bg-rose-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-50">
             Broadcast Warning
@@ -74,8 +78,9 @@
       </section>
     </div>
 
-    <footer class="mt-12 text-xs text-slate-600">
-      Only report what you actually saw. Emergencies: call 911.
+    <footer class="mt-12 space-y-2 text-xs text-slate-600">
+      <p>Only report what you actually saw. Never confront or chase anyone—emergencies: call 911 or Campus Security.</p>
+      <p>Disclaimer: findmypackage.tech is an unverified community notification tool only and is not affiliated with law enforcement or university housing. Users accept full responsibility for their own actions.</p>
     </footer>
   </main>
 
@@ -134,13 +139,21 @@
     );
 
     wire('broadcast-form', 'broadcast-status', API_BASE,
-      () => ({
-        action: 'broadcast',
-        locationKey: document.getElementById('bc-key').value,
-        description: document.getElementById('bc-desc').value,
-      }),
+      () => {
+        if (!document.getElementById('bc-safety').checked) {
+          throw new Error('Please check the safety box confirming you will not confront anyone.');
+        }
+        return {
+          action: 'broadcast',
+          locationKey: document.getElementById('bc-key').value,
+          description: document.getElementById('bc-desc').value,
+        };
+      },
       'Sending alert…',
-      () => { document.getElementById('bc-desc').value = ''; }
+      () => {
+        document.getElementById('bc-desc').value = '';
+        document.getElementById('bc-safety').checked = false;
+      }
     );
   </script>
 </body>
