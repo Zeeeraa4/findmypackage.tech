@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>findmypackage.tech – neighborhood package theft alerts</title>
-  <meta name="description" content="Join your block's anti-theft mesh. Spot a porch pirate, warn every neighbor in seconds.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <title>findmypackage.tech – apartment tow truck &amp; parking alerts</title>
+  <meta name="description" content="Tenant-powered tow alerts. Spot a tow truck or 24-hour warning sticker, warn your building in seconds.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <style>
     body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
@@ -18,7 +18,7 @@
     <header class="mb-12 max-w-2xl">
       <h1 class="text-3xl font-bold tracking-tight text-slate-50 sm:text-5xl">findmy<span class="text-rose-500">package</span>.tech</h1>
       <p class="mt-4 text-base leading-relaxed text-slate-400 sm:text-lg">
-        Your block, wired together. Join your zone to get alerts, or warn every neighbor the moment you see a thief.
+        Your apartment complex, wired together. Join your building zone to get instant warnings when a tow truck enters the lot or a 24-hour tow sticker is spotted.
       </p>
     </header>
 
@@ -26,8 +26,8 @@
 
       <!-- Card 1: subscribe -->
       <section class="rounded-xl border border-slate-800 bg-slate-900/60 p-6">
-        <h2 class="text-xl font-semibold text-slate-50">Secure Your Zone</h2>
-        <p class="mt-1 text-sm text-slate-400">Get an email when a neighbor reports a porch pirate nearby.</p>
+        <h2 class="text-xl font-semibold text-slate-50">Protect Your Vehicle</h2>
+        <p class="mt-1 text-sm text-slate-400">Get an email before hookup to avoid $400+ impound fees.</p>
 
         <form id="subscribe-form" class="mt-6 space-y-4" novalidate>
           <div>
@@ -36,14 +36,14 @@
               class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
           </div>
           <div>
-            <label for="sub-key" class="mb-1.5 block text-sm font-medium text-slate-200">Location key</label>
-            <input id="sub-key" type="text" required maxlength="64" placeholder="98105 or UW-Lander-Hall"
+            <label for="sub-key" class="mb-1.5 block text-sm font-medium text-slate-200">Apartment complex or street key</label>
+            <input id="sub-key" type="text" required maxlength="64" placeholder="North-Star-Apartment-Homes"
               class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
-            <p class="mt-1.5 text-xs text-slate-500">A zip code or dorm name. Everyone who enters the same key is in the same zone.</p>
+            <p class="mt-1.5 text-xs text-slate-500">Your apartment name or street. Once 5 tenants join the same key, live tow alerts unlock.</p>
           </div>
           <button type="submit"
             class="w-full rounded-lg border border-slate-600 bg-slate-800 px-4 py-2.5 font-semibold text-slate-50 transition hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 disabled:cursor-not-allowed disabled:opacity-50">
-            Join this zone
+            Join building zone
           </button>
           <p id="subscribe-status" role="status" aria-live="polite" class="min-h-[1.25rem] text-sm"></p>
         </form>
@@ -51,23 +51,31 @@
 
       <!-- Card 2: broadcast -->
       <section class="rounded-xl border border-rose-500/40 bg-slate-900/60 p-6 shadow-[0_0_40px_-12px] shadow-rose-500/30">
-        <h2 class="text-xl font-semibold text-rose-400">Trigger Flash Alert</h2>
-        <p class="mt-1 text-sm text-slate-400">See someone taking packages? Email everyone in the zone right now.</p>
+        <h2 class="text-xl font-semibold text-rose-400">Broadcast Tow Warning</h2>
+        <p class="mt-1 text-sm text-slate-400">Spot a tow truck or warning sticker? Warn every tenant in your zone right now.</p>
 
         <form id="broadcast-form" class="mt-6 space-y-4" novalidate>
           <div>
-            <label for="bc-key" class="mb-1.5 block text-sm font-medium text-slate-200">Location key</label>
-            <input id="bc-key" type="text" required maxlength="64" placeholder="98105 or UW-Lander-Hall"
+            <label for="bc-key" class="mb-1.5 block text-sm font-medium text-slate-200">Apartment complex or street key</label>
+            <input id="bc-key" type="text" required maxlength="64" placeholder="North-Star-Apartment-Homes"
               class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
           </div>
           <div>
-            <label for="bc-desc" class="mb-1.5 block text-sm font-medium text-slate-200">What did you see? <span class="font-normal text-slate-500">(optional)</span></label>
-            <textarea id="bc-desc" rows="3" maxlength="500" placeholder="Person in a gray hoodie, silver sedan, heading north on 15th Ave"
+            <label for="bc-type" class="mb-1.5 block text-sm font-medium text-slate-200">Warning type</label>
+            <select id="bc-type"
+              class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
+              <option value="truck">🚨 Tow Truck Entering / On Site Now</option>
+              <option value="sticker">🟠 24-Hr Tow Warning Sticker / Chalk Mark</option>
+            </select>
+          </div>
+          <div>
+            <label for="bc-desc" class="mb-1.5 block text-sm font-medium text-slate-200">Details <span class="font-normal text-slate-500">(optional)</span></label>
+            <textarea id="bc-desc" rows="3" maxlength="500" placeholder="White flatbed entering Building A gate, or orange sticker on silver Civic near visitor stalls"
               class="w-full resize-none rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30"></textarea>
           </div>
           <label class="flex items-start gap-2.5 text-xs text-slate-400 cursor-pointer">
             <input id="bc-safety" type="checkbox" required class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-rose-500">
-            <span>I am reporting a truthful, first-hand observation. I will <strong>not</strong> confront, follow, or intervene with any suspect, and I will call 911 or Campus Security for active crimes.</span>
+            <span>I am reporting a truthful, first-hand observation. I will <strong>not</strong> block, chase, or confront any tow operator, and I will move vehicles safely.</span>
           </label>
           <button type="submit"
             class="w-full rounded-lg bg-rose-500 px-4 py-2.5 font-bold text-white transition hover:bg-rose-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-50">
@@ -79,8 +87,8 @@
     </div>
 
     <footer class="mt-12 space-y-2 text-xs text-slate-600">
-      <p>Only report what you actually saw. Never confront or chase anyone—emergencies: call 911 or Campus Security.</p>
-      <p>Disclaimer: findmypackage.tech is an unverified community notification tool only and is not affiliated with law enforcement or university housing. Users accept full responsibility for their own actions.</p>
+      <p>Only report what you actually saw. Never block or confront tow operators—move vehicles safely before hookup.</p>
+      <p>Disclaimer: findmypackage.tech is an unverified community notification tool only and is not affiliated with property management or towing companies. Users accept full responsibility for obeying property parking rules.</p>
     </footer>
   </main>
 
@@ -139,18 +147,14 @@
     );
 
     wire('broadcast-form', 'broadcast-status', API_BASE,
-      () => {
-        if (!document.getElementById('bc-safety').checked) {
-          throw new Error('Please check the safety box confirming you will not confront anyone.');
-        }
-        return {
-          action: 'broadcast',
-          locationKey: document.getElementById('bc-key').value,
-          description: document.getElementById('bc-desc').value,
-          safetyAgreed: true,
-        };
-      },
-      'Sending alert…',
+      () => ({
+        action: 'broadcast',
+        locationKey: document.getElementById('bc-key').value,
+        alertType: document.getElementById('bc-type').value,
+        description: document.getElementById('bc-desc').value,
+        safetyAgreed: document.getElementById('bc-safety').checked,
+      }),
+      'Broadcasting…',
       () => {
         document.getElementById('bc-desc').value = '';
         document.getElementById('bc-safety').checked = false;
@@ -159,3 +163,4 @@
   </script>
 </body>
 </html>
+
