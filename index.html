@@ -1,94 +1,134 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-slate-950">
+<html lang="en" class="bg-[#FFFC00]">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>findmypackage.tech – apartment tow truck &amp; parking alerts</title>
-  <meta name="description" content="Tenant-powered tow alerts. Spot a tow truck or 24-hour warning sticker, warn your building in seconds.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
+  <title>SNAPMAIL.LIVE – Free, Instant Tag-Based Email Blasts</title>
+  <meta name="description" content="The free, zero-account alternative to Mailchimp. Join a tag or blast an email to your entire crew in seconds at snapmail.live.">
+  <link rel="canonical" href="https://snapmail.live/">
+
+  <!-- Open Graph / Social Link Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://snapmail.live/">
+  <meta property="og:title" content="SNAPMAIL.LIVE – Fast, Free Tag-Based Email Blasts">
+  <meta property="og:description" content="Drop a tag. Build a crew. Blast an email to everyone in seconds—100% free, zero logins required.">
+
+  <!-- Favicon matching the Snapmail envelope logo -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 58 40'><rect x='1.5' y='1.5' width='55' height='37' rx='5' fill='%23FFFFFF' stroke='%23000000' stroke-width='3'/><path d='M2 3L29 23L56 3' fill='none' stroke='%23000000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Oswald:wght@700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <style>
-    body { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .font-brand { font-family: 'Oswald', sans-serif; }
+    .hard-card {
+      border: 3px solid #000000;
+      box-shadow: 6px 6px 0px #000000;
+    }
+    .hard-input {
+      border: 3px solid #000000;
+    }
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-300 antialiased">
-  <main class="mx-auto max-w-4xl px-5 py-12 sm:py-20">
+<body class="min-h-screen bg-[#FFFC00] text-black antialiased">
+  <main class="mx-auto max-w-4xl px-5 py-10 sm:py-16">
 
-    <header class="mb-12 max-w-2xl">
-      <h1 class="text-3xl font-bold tracking-tight text-slate-50 sm:text-5xl">findmy<span class="text-rose-500">package</span>.tech</h1>
-      <p class="mt-4 text-base leading-relaxed text-slate-400 sm:text-lg">
-        Your apartment complex, wired together. Join your building zone to get instant warnings when a tow truck enters the lot or a 24-hour tow sticker is spotted.
+    <!-- Header & Snapmail Brand Logo -->
+    <header class="mb-10 max-w-2xl">
+      <div class="inline-flex items-center gap-3">
+        <h1 class="font-brand text-5xl font-bold uppercase tracking-tight text-black sm:text-6xl">
+          SNAPMAIL
+        </h1>
+        <span class="flex h-10 w-14 items-center justify-center rounded-md border-[3px] border-black bg-white sm:h-12 sm:w-16" aria-hidden="true">
+          <svg viewBox="0 0 58 40" class="h-full w-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 3L29 23L56 3" stroke="#000000" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 37L21 19" stroke="#000000" stroke-width="3.4" stroke-linecap="round"/>
+            <path d="M56 37L37 19" stroke="#000000" stroke-width="3.4" stroke-linecap="round"/>
+          </svg>
+        </span>
+      </div>
+
+      <p class="mt-4 text-base font-semibold leading-relaxed text-black/90 sm:text-lg">
+        The fast, free alternative to Mailchimp—no logins, no dashboards, no bloat. Drop a tag to build your list and blast updates to everyone at once.
       </p>
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-extrabold uppercase tracking-wide">100% Free</span>
+        <span class="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-extrabold uppercase tracking-wide">Zero Account Needed</span>
+        <span class="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-extrabold uppercase tracking-wide">Instant Tag Blasts</span>
+      </div>
     </header>
 
-    <div class="grid gap-6 md:grid-cols-2">
+    <div class="grid gap-8 md:grid-cols-2">
 
       <!-- Card 1: subscribe -->
-      <section class="rounded-xl border border-slate-800 bg-slate-900/60 p-6">
-        <h2 class="text-xl font-semibold text-slate-50">Protect Your Vehicle</h2>
-        <p class="mt-1 text-sm text-slate-400">Get an email before hookup to avoid $400+ impound fees.</p>
+      <section class="hard-card rounded-2xl bg-white p-6 sm:p-7">
+        <h2 class="font-brand text-2xl font-bold uppercase tracking-tight text-black">Join a Snapmail Tag</h2>
+        <p class="mt-1 text-sm font-medium text-neutral-700">Subscribe to any community, creator, or event tag in one tap.</p>
 
         <form id="subscribe-form" class="mt-6 space-y-4" novalidate>
           <div>
-            <label for="sub-email" class="mb-1.5 block text-sm font-medium text-slate-200">Email</label>
+            <label for="sub-email" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Your Email</label>
             <input id="sub-email" type="email" required autocomplete="email" placeholder="you@example.com"
-              class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
+              class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
           </div>
           <div>
-            <label for="sub-key" class="mb-1.5 block text-sm font-medium text-slate-200">Apartment complex or street key</label>
-            <input id="sub-key" type="text" required maxlength="64" placeholder="North-Star-Apartment-Homes"
-              class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
-            <p class="mt-1.5 text-xs text-slate-500">Your apartment name or street. Once 5 tenants join the same key, live tow alerts unlock.</p>
+            <label for="sub-key" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Snapmail Tag Name</label>
+            <input id="sub-key" type="text" required maxlength="64" placeholder="seattle-popups"
+              class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
+            <p class="mt-1.5 text-xs font-medium text-neutral-600">Enter the tag shared by your group or creator. Once 5 people join a tag, live email blasts unlock.</p>
           </div>
           <button type="submit"
-            class="w-full rounded-lg border border-slate-600 bg-slate-800 px-4 py-2.5 font-semibold text-slate-50 transition hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 disabled:cursor-not-allowed disabled:opacity-50">
-            Join building zone
+            class="font-brand w-full rounded-full border-[3px] border-black bg-white px-4 py-3 text-lg font-bold uppercase tracking-wider text-black transition hover:bg-black hover:text-[#FFFC00] focus:outline-none focus-visible:ring-2 focus-visible:ring-black disabled:cursor-not-allowed disabled:opacity-50">
+            Join Tag List
           </button>
-          <p id="subscribe-status" role="status" aria-live="polite" class="min-h-[1.25rem] text-sm"></p>
+          <p id="subscribe-status" role="status" aria-live="polite" class="min-h-[1.25rem] text-sm font-bold"></p>
         </form>
       </section>
 
       <!-- Card 2: broadcast -->
-      <section class="rounded-xl border border-rose-500/40 bg-slate-900/60 p-6 shadow-[0_0_40px_-12px] shadow-rose-500/30">
-        <h2 class="text-xl font-semibold text-rose-400">Broadcast Tow Warning</h2>
-        <p class="mt-1 text-sm text-slate-400">Spot a tow truck or warning sticker? Warn every tenant in your zone right now.</p>
+      <section class="hard-card rounded-2xl bg-white p-6 sm:p-7">
+        <h2 class="font-brand text-2xl font-bold uppercase tracking-tight text-black">Send a Free Blast</h2>
+        <p class="mt-1 text-sm font-medium text-neutral-700">Got news, a drop, or an update? Blast everyone subscribed to your tag right now.</p>
 
         <form id="broadcast-form" class="mt-6 space-y-4" novalidate>
           <div>
-            <label for="bc-key" class="mb-1.5 block text-sm font-medium text-slate-200">Apartment complex or street key</label>
-            <input id="bc-key" type="text" required maxlength="64" placeholder="North-Star-Apartment-Homes"
-              class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
+            <label for="bc-key" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Target Tag Name</label>
+            <input id="bc-key" type="text" required maxlength="64" placeholder="seattle-popups"
+              class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
           </div>
           <div>
-            <label for="bc-type" class="mb-1.5 block text-sm font-medium text-slate-200">Warning type</label>
+            <label for="bc-type" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Blast Category</label>
             <select id="bc-type"
-              class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30">
-              <option value="truck">🚨 Tow Truck Entering / On Site Now</option>
-              <option value="sticker">🟠 24-Hr Tow Warning Sticker / Chalk Mark</option>
+              class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-semibold text-black outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
+              <option value="truck">⚡ Instant Drop / Live Announcement</option>
+              <option value="sticker">📣 Newsletter / Upcoming Event</option>
             </select>
           </div>
           <div>
-            <label for="bc-desc" class="mb-1.5 block text-sm font-medium text-slate-200">Details <span class="font-normal text-slate-500">(optional)</span></label>
-            <textarea id="bc-desc" rows="3" maxlength="500" placeholder="White flatbed entering Building A gate, or orange sticker on silver Civic near visitor stalls"
-              class="w-full resize-none rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-slate-100 placeholder-slate-600 outline-none transition focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30"></textarea>
+            <label for="bc-desc" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Blast Message <span class="font-semibold text-neutral-500">(optional)</span></label>
+            <textarea id="bc-desc" rows="3" maxlength="500" placeholder="Secret warehouse sale starts in 30 mins—show this email at the door for 20% off!"
+              class="hard-input w-full resize-none rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20"></textarea>
           </div>
-          <label class="flex items-start gap-2.5 text-xs text-slate-400 cursor-pointer">
-            <input id="bc-safety" type="checkbox" required class="mt-0.5 h-4 w-4 rounded border-slate-700 bg-slate-950 text-rose-500">
-            <span>I am reporting a truthful, first-hand observation. I will <strong>not</strong> block, chase, or confront any tow operator, and I will move vehicles safely.</span>
+          <label class="flex items-start gap-2.5 text-xs font-medium text-neutral-700 cursor-pointer">
+            <input id="bc-safety" type="checkbox" required class="mt-0.5 h-4 w-4 rounded border-2 border-black accent-black">
+            <span>I confirm this message is legitimate, contains <strong>no</strong> spam or deceptive links, and is meant for subscribers of this tag.</span>
           </label>
           <button type="submit"
-            class="w-full rounded-lg bg-rose-500 px-4 py-2.5 font-bold text-white transition hover:bg-rose-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-50">
-            Broadcast Warning
+            class="font-brand w-full rounded-full border-[3px] border-black bg-black px-4 py-3 text-lg font-bold uppercase tracking-wider text-[#FFFC00] transition hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+            Send Email Blast
           </button>
-          <p id="broadcast-status" role="status" aria-live="polite" class="min-h-[1.25rem] text-sm"></p>
+          <p id="broadcast-status" role="status" aria-live="polite" class="min-h-[1.25rem] text-sm font-bold"></p>
         </form>
       </section>
     </div>
 
-    <footer class="mt-12 space-y-2 text-xs text-slate-600">
-      <p>Only report what you actually saw. Never block or confront tow operators—move vehicles safely before hookup.</p>
-      <p>Disclaimer: findmypackage.tech is an unverified community notification tool only and is not affiliated with property management or towing companies. Users accept full responsibility for obeying property parking rules.</p>
+    <footer class="mt-12 space-y-1.5 text-xs font-semibold text-black/80">
+      <p>SNAPMAIL.LIVE — Built for creators, local crews, and communities who want fast email blasts without monthly fees.</p>
+      <p>Disclaimer: snapmail.live is a community-driven broadcast tool. Please respect subscriber inboxes and follow anti-spam laws.</p>
     </footer>
   </main>
 
@@ -118,17 +158,17 @@
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         status.textContent = '';
-        status.className = 'min-h-[1.25rem] text-sm';
+        status.className = 'min-h-[1.25rem] text-sm font-bold';
         button.disabled = true;
         button.textContent = busyText;
         try {
           const data = await post(url, getPayload());
           status.textContent = data.message;
-          status.className = 'min-h-[1.25rem] text-sm text-emerald-400';
+          status.className = 'min-h-[1.25rem] text-sm font-bold text-emerald-700';
           onSuccess();
         } catch (err) {
           status.textContent = err.message;
-          status.className = 'min-h-[1.25rem] text-sm text-rose-400';
+          status.className = 'min-h-[1.25rem] text-sm font-bold text-red-600';
         } finally {
           button.disabled = false;
           button.textContent = label;
@@ -154,7 +194,7 @@
         description: document.getElementById('bc-desc').value,
         safetyAgreed: document.getElementById('bc-safety').checked,
       }),
-      'Broadcasting…',
+      'Sending Blast…',
       () => {
         document.getElementById('bc-desc').value = '';
         document.getElementById('bc-safety').checked = false;
