@@ -1,557 +1,853 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-[#FFFC00]">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SNAPMAIL.LIVE – Free, Instant Tag-Based Email Blasts</title>
-  <meta name="description" content="The free, zero-account alternative to Mailchimp. Join a tag or blast an email to your entire crew in seconds at snapmail.live.">
-  <link rel="canonical" href="https://snapmail.live/">
-
-  <!-- Open Graph / Social Link Preview -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://snapmail.live/">
-  <meta property="og:title" content="SNAPMAIL.LIVE – Fast, Free Tag-Based Email Blasts">
-  <meta property="og:description" content="Drop a tag. Build a crew. Blast an email to everyone in seconds—100% free, zero logins required.">
-
-  <!-- Favicon matching the Snapmail envelope logo -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 58 40'><rect x='1.5' y='1.5' width='55' height='37' rx='5' fill='%23FFFFFF' stroke='%23000000' stroke-width='3'/><path d='M2 3L29 23L56 3' fill='none' stroke='%23000000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Oswald:wght@700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://gumroad.com/js/gumroad.js"></script>
+  <link rel="icon" type="image/png" href="favicon.png" />
   <style>
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
-    .font-brand { font-family: 'Oswald', sans-serif; }
-    .hard-card {
-      border: 3px solid #000000;
-      box-shadow: 6px 6px 0px #000000;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    .hard-input {
-      border: 3px solid #000000;
+
+    body {
+      background-color: #FFFC00;
+      color: #000000;
+      min-height: 100vh;
+      padding: 28px 16px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+    .container {
+      width: 100%;
+      max-width: 560px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .logo-row svg {
+      width: 36px;
+      height: 36px;
+      stroke: #000000;
+      stroke-width: 2.8;
+      fill: #FFFFFF;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.4;
+      max-width: 460px;
+      margin: 0 auto 14px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .pill {
+      background: #FFFFFF;
+      border: 2.5px solid #000000;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      box-shadow: 2px 2px 0 #000000;
+    }
+
+    .card {
+      background: #FFFFFF;
+      border: 3px solid #000000;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 6px 6px 0 #000000;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 900;
+    }
+
+    .badge {
+      background: #FFFC00;
+      border: 2px solid #000000;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .card-desc {
+      font-size: 0.92rem;
+      color: #222222;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    input[type="password"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2.5px solid #000000;
+      border-radius: 12px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      background: #FFFFFF;
+      color: #000000;
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      background: #FFFDF0;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: #444444;
+      margin-top: -8px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .btn {
+      width: 100%;
+      background: #000000;
+      color: #FFFC00;
+      border: 2.5px solid #000000;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.08s ease;
+      text-align: center;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .btn:active {
+      transform: translate(2px, 2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #FFFC00;
+      color: #000000;
+    }
+
+    .btn-small {
+      width: auto;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      border-radius: 10px;
+    }
+
+    .status-msg {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: none;
+      border: 2px solid #000000;
+    }
+
+    .status-msg.success {
+      display: block;
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .status-msg.error {
+      display: block;
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .share-box {
+      margin-top: 16px;
+      padding: 16px;
+      background: #FFFC00;
+      border: 2.5px solid #000000;
+      border-radius: 14px;
+      display: none;
+    }
+
+    .share-box.active {
+      display: block;
+    }
+
+    .share-title {
+      font-size: 0.95rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .link-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .link-row input {
+      margin-bottom: 0;
+      font-size: 0.85rem;
+      background: #FFFFFF;
+    }
+
+    .qr-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #FFFFFF;
+      border: 2px solid #000000;
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    #qrCanvas {
+      width: 84px;
+      height: 84px;
+      border: 1.5px solid #000000;
+      border-radius: 6px;
+      background: #FFFFFF;
+    }
+
+    .extras-toggle {
+      background: #F4F4F5;
+      border: 2px dashed #000000;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .extras-panel {
+      display: none;
+      padding: 12px;
+      background: #FAFAFA;
+      border: 2px solid #000000;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .extras-panel.open {
+      display: block;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: #000000;
+      cursor: pointer;
+    }
+
+    .pro-upsell {
+      margin-top: 14px;
+      padding: 16px;
+      background: #FFFC00;
+      border: 2.5px solid #000000;
+      border-radius: 14px;
+      display: none;
+    }
+
+    .pro-upsell.active {
+      display: block;
+    }
+
+    .pro-upsell h3 {
+      font-size: 1.05rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .pro-upsell ul {
+      margin: 0 0 14px 18px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .pro-dashboard {
+      margin-top: 14px;
+      padding: 16px;
+      background: #F9FAFB;
+      border: 2.5px solid #000000;
+      border-radius: 14px;
+      display: none;
+    }
+
+    .pro-dashboard.active {
+      display: block;
+    }
+
+    .pro-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .follower-list {
+      max-height: 220px;
+      overflow-y: auto;
+      border: 2px solid #000000;
+      border-radius: 10px;
+      background: #FFFFFF;
+    }
+
+    .follower-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 12px;
+      border-bottom: 1.5px solid #E5E7EB;
+      font-size: 0.86rem;
+      font-weight: 700;
+      gap: 8px;
+    }
+
+    .follower-item:last-child {
+      border-bottom: none;
+    }
+
+    .remove-btn {
+      background: #FEE2E2;
+      color: #991B1B;
+      border: 1.5px solid #000000;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .disclaimer {
+      font-size: 0.76rem;
+      font-weight: 600;
+      margin-top: 4px;
+      opacity: 0.85;
+    }
   </style>
 </head>
-<body class="min-h-screen bg-[#FFFC00] text-black antialiased">
-  <main class="mx-auto max-w-4xl px-5 py-10 sm:py-16">
-
-    <!-- Header & Snapmail Brand Logo -->
-    <header class="mb-10 max-w-2xl">
-      <div class="inline-flex items-center gap-3">
-        <h1 class="font-brand text-5xl font-bold uppercase tracking-tight text-black sm:text-6xl">
-          SNAPMAIL
-        </h1>
-        <span class="flex h-10 w-14 items-center justify-center rounded-md border-[3px] border-black bg-white sm:h-12 sm:w-16" aria-hidden="true">
-          <svg viewBox="0 0 58 40" class="h-full w-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 3L29 23L56 3" stroke="#000000" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M2 37L21 19" stroke="#000000" stroke-width="3.4" stroke-linecap="round"/>
-            <path d="M56 37L37 19" stroke="#000000" stroke-width="3.4" stroke-linecap="round"/>
-          </svg>
-        </span>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="3"></rect>
+          <path d="M22 6L12 13L2 6"></path>
+        </svg>
+        <h1>SNAPMAIL</h1>
       </div>
-
-      <p class="mt-4 text-base font-semibold leading-relaxed text-black/90 sm:text-lg">
-        E-mail marketing just got snappier. Drop a tag to build your list and blast updates to everyone at once—zero logins, no monthly fees required.
-      </p>
-
-      <div class="mt-4 flex flex-wrap gap-2">
-        <span class="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-extrabold uppercase tracking-wide">Free Forever Tier</span>
-        <span class="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-extrabold uppercase tracking-wide">5-Second Setup</span>
-        <span class="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-extrabold uppercase tracking-wide">Instant QR &amp; Bio Links</span>
+      <p class="subtitle">E-mail marketing just got snappier. Drop a tag to build your list and blast updates to everyone at once—zero logins, no monthly fees required.</p>
+      <div class="pill-row">
+        <span class="pill">Free Forever Tier</span>
+        <span class="pill">5-Second Setup</span>
+        <span class="pill">Instant QR &amp; Bio Links</span>
       </div>
     </header>
 
-    <div class="grid gap-8 md:grid-cols-2">
-
-      <!-- Card 1: subscribe / claim tag -->
-      <section class="hard-card rounded-2xl bg-white p-6 sm:p-7">
-        <h2 class="font-brand text-2xl font-bold uppercase tracking-tight text-black">Join or Start a Tag</h2>
-        <p class="mt-1 text-sm font-medium text-neutral-700">Subscribe to a tag or claim a new one for your crew.</p>
-
-        <form id="subscribe-form" class="mt-6 space-y-4" novalidate>
-          <div>
-            <label for="sub-email" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Your Email</label>
-            <input id="sub-email" type="email" required autocomplete="email" placeholder="you@example.com"
-              class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
-          </div>
-          <div>
-            <label for="sub-key" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Snapmail Tag Name</label>
-            <input id="sub-key" type="text" required maxlength="64" placeholder="seattle-popups"
-              class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
-            <p class="mt-1.5 text-xs font-medium text-neutral-600">Once 5 members join a tag, live email blasts unlock automatically.</p>
-          </div>
-          <div>
-            <label for="sub-pin" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">
-              Creator PIN <span class="font-semibold normal-case text-neutral-500">(optional, 4 digits to lock new tag)</span>
-            </label>
-            <input id="sub-pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="e.g. 1234"
-              class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
-          </div>
-          <button type="submit"
-            class="font-brand w-full rounded-full border-[3px] border-black bg-white px-4 py-3 text-lg font-bold uppercase tracking-wider text-black transition hover:bg-black hover:text-[#FFFC00] focus:outline-none focus-visible:ring-2 focus-visible:ring-black disabled:cursor-not-allowed disabled:opacity-50">
-            Join Tag List
-          </button>
-          <p id="subscribe-status" role="status" aria-live="polite" class="min-h-[1.25rem] text-sm font-bold"></p>
-        </form>
-
-        <!-- 1-Click Share Link & QR Code Box -->
-        <div id="share-kit" class="mt-5 hidden rounded-xl border-[3px] border-black bg-[#FFFC00] p-4">
-          <div class="flex items-center justify-between gap-2">
-            <span class="text-xs font-extrabold uppercase tracking-wider text-black">Share Your Tag</span>
-            <span id="share-tag-badge" class="rounded-full border-2 border-black bg-white px-2.5 py-0.5 text-xs font-extrabold">@tag</span>
-          </div>
-
-          <div class="mt-2.5 flex items-center gap-2">
-            <input id="share-url-input" type="text" readonly
-              class="w-full rounded-lg border-2 border-black bg-white px-2.5 py-1.5 text-xs font-bold text-black outline-none">
-            <button type="button" id="copy-link-btn"
-              class="shrink-0 rounded-lg border-2 border-black bg-black px-3 py-1.5 text-xs font-extrabold uppercase text-[#FFFC00] transition hover:bg-neutral-800">
-              Copy
-            </button>
-          </div>
-
-          <div class="mt-3 flex items-center gap-4">
-            <div id="qr-container" class="shrink-0 rounded-lg border-2 border-black bg-white p-1.5"></div>
-            <div class="space-y-2">
-              <p class="text-xs font-semibold leading-snug text-black">Put this link in your bio or print the QR code for flyers &amp; tables.</p>
-              <button type="button" id="download-qr-btn"
-                class="rounded-lg border-2 border-black bg-white px-3 py-1.5 text-xs font-extrabold uppercase text-black transition hover:bg-black hover:text-[#FFFC00]">
-                Download QR PNG
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Card 2: broadcast -->
-      <section class="hard-card rounded-2xl bg-white p-6 sm:p-7">
-        <h2 class="font-brand text-2xl font-bold uppercase tracking-tight text-black">Send a Free Blast</h2>
-        <p class="mt-1 text-sm font-medium text-neutral-700">Blast an instant update or promo to everyone subscribed to your tag.</p>
-
-        <form id="broadcast-form" class="mt-6 space-y-4" novalidate>
-          <div class="grid gap-3 sm:grid-cols-3">
-            <div class="sm:col-span-2">
-              <label for="bc-key" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Target Tag Name</label>
-              <input id="bc-key" type="text" required maxlength="64" placeholder="seattle-popups"
-                class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
-            </div>
-            <div>
-              <label for="bc-pin" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Tag PIN</label>
-              <input id="bc-pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="If set"
-                class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
-            </div>
-          </div>
-
-          <div>
-            <label for="bc-type" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Blast Category</label>
-            <select id="bc-type"
-              class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-semibold text-black outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
-              <option value="truck">⚡ Instant Drop / Live Announcement</option>
-              <option value="sticker">📣 Newsletter / Upcoming Event</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="bc-desc" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">
-              Blast Message <span class="font-semibold normal-case text-neutral-500">(use **bold** for promo codes)</span>
-            </label>
-            <textarea id="bc-desc" rows="3" maxlength="500" placeholder="Secret warehouse sale starts in 30 mins! Use code **SNAP20** at checkout."
-              class="hard-input w-full resize-none rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20"></textarea>
-          </div>
-
-          <!-- Collapsible Marketing Extras: Flyer Image & CTA Button -->
-          <details class="rounded-xl border-2 border-black bg-[#F9F9F6] p-3">
-            <summary class="cursor-pointer text-xs font-extrabold uppercase tracking-wider text-black">
-              + Add Flyer Image or Action Button (Optional)
-            </summary>
-            <div class="mt-3 space-y-3">
-              <div>
-                <label for="bc-image" class="mb-1 block text-xs font-bold text-black">Promo Flyer / Image URL</label>
-                <input id="bc-image" type="url" maxlength="300" placeholder="https://i.imgur.com/your-flyer.png"
-                  class="w-full rounded-lg border-2 border-black bg-white px-3 py-2 text-sm font-medium text-black placeholder-neutral-400 outline-none focus:bg-[#FFFFE0]">
-              </div>
-              <div class="grid gap-2.5 sm:grid-cols-2">
-                <div>
-                  <label for="bc-cta-text" class="mb-1 block text-xs font-bold text-black">Button Label</label>
-                  <input id="bc-cta-text" type="text" maxlength="40" placeholder="Grab Tickets →"
-                    class="w-full rounded-lg border-2 border-black bg-white px-3 py-2 text-sm font-medium text-black placeholder-neutral-400 outline-none focus:bg-[#FFFFE0]">
-                </div>
-                <div>
-                  <label for="bc-cta-url" class="mb-1 block text-xs font-bold text-black">Button Link URL</label>
-                  <input id="bc-cta-url" type="url" maxlength="300" placeholder="https://yourlink.com"
-                    class="w-full rounded-lg border-2 border-black bg-white px-3 py-2 text-sm font-medium text-black placeholder-neutral-400 outline-none focus:bg-[#FFFFE0]">
-                </div>
-              </div>
-            </div>
-          </details>
-
-          <label class="flex items-start gap-2.5 text-xs font-medium text-neutral-700 cursor-pointer">
-            <input id="bc-safety" type="checkbox" required class="mt-0.5 h-4 w-4 rounded border-2 border-black accent-black">
-            <span>I confirm this message is legitimate, contains <strong>no</strong> spam or deceptive links, and is meant for subscribers of this tag.</span>
-          </label>
-          <button type="submit"
-            class="font-brand w-full rounded-full border-[3px] border-black bg-black px-4 py-3 text-lg font-bold uppercase tracking-wider text-[#FFFC00] transition hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-            Send Email Blast
-          </button>
-          <p id="broadcast-status" role="status" aria-live="polite" class="min-h-[1.25rem] text-sm font-bold"></p>
-        </form>
-      </section>
-    </div>
-
-    <!-- Card 3: Manage Tag & Pro Follower Controls -->
-    <section class="hard-card mt-8 rounded-2xl bg-white p-6 sm:p-7">
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <div class="inline-flex items-center gap-2">
-            <h2 class="font-brand text-2xl font-bold uppercase tracking-tight text-black">Manage Your Followers</h2>
-            <span class="rounded-full border-2 border-black bg-[#FFFC00] px-2.5 py-0.5 text-xs font-extrabold uppercase">Pro • $15/mo</span>
-          </div>
-          <p class="mt-1 text-sm font-medium text-neutral-700">Export your subscriber CSV, view live follower counts, remove emails, and unlock unlimited white-label blasts.</p>
-        </div>
+    <!-- CARD 1: JOIN OR START A TAG -->
+    <section class="card">
+      <div class="card-header">
+        <h2>Join or Start a Tag</h2>
       </div>
+      <p class="card-desc">Subscribe to a tag or claim a new one for your crew.</p>
 
-      <form id="manage-form" class="mt-5 grid gap-3 sm:grid-cols-3" novalidate>
-        <input id="mg-key" type="text" required maxlength="64" placeholder="Your @tag name"
-          class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none focus:bg-[#FFFFE0]">
-        <input id="mg-pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required placeholder="4-digit Creator PIN"
-          class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none focus:bg-[#FFFFE0]">
-        <button type="submit"
-          class="font-brand w-full rounded-full border-[3px] border-black bg-black px-4 py-2.5 text-base font-bold uppercase tracking-wider text-[#FFFC00] transition hover:bg-neutral-800">
-          Open Tag Manager
-        </button>
+      <form id="joinForm">
+        <label for="joinEmail">Your Email</label>
+        <input type="email" id="joinEmail" placeholder="you@example.com" required />
+
+        <label for="joinTag">Snapmail Tag Name</label>
+        <input type="text" id="joinTag" placeholder="e.g. seattle-popups" required />
+        <p class="hint">Once 5 members join a tag, live email blasts unlock automatically.</p>
+
+        <label for="joinPin">Creator PIN (optional, 4 digits to lock new tag)</label>
+        <input type="password" id="joinPin" maxlength="4" pattern="\d{4}" inputmode="numeric" placeholder="e.g. 1234" />
+
+        <button type="submit" class="btn" id="joinBtn">Join Tag List</button>
       </form>
-      <p id="manage-status" role="status" aria-live="polite" class="mt-2 min-h-[1.25rem] text-sm font-bold"></p>
 
-      <!-- Upgrade Prompt (Shown if tag is not Pro yet) -->
-      <div id="pro-upsell-box" class="mt-4 hidden rounded-xl border-[3px] border-black bg-[#FFFC00] p-4 sm:p-5">
-        <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h3 class="font-brand text-xl font-bold uppercase text-black">Upgrade <span id="upsell-tag-name">@tag</span> to Snapmail Pro</h3>
-            <ul class="mt-1.5 space-y-1 text-xs font-bold text-black/90">
-              <li>✓ View exact follower count &amp; download 1-click CSV backups</li>
-              <li>✓ Manually remove individual subscribers anytime</li>
-              <li>✓ Remove Snapmail footer branding &amp; bypass free daily limits</li>
-            </ul>
-          </div>
-          <a id="gumroad-upgrade-link" href="https://snapmaillive.gumroad.com/l/wdgxvo"
-            class="gumroad-button font-brand shrink-0 rounded-full border-[3px] border-black bg-black px-5 py-3 text-center text-base font-bold uppercase tracking-wider text-[#FFFC00] transition hover:bg-neutral-800">
-            Upgrade — $15/mo
-          </a>
+      <div id="joinStatus" class="status-msg"></div>
+
+      <!-- 1-CLICK SHARE LINKS & QR CODES -->
+      <div id="shareBox" class="share-box">
+        <div class="share-title" id="shareTitle">Share Your Tag @tag</div>
+        <div class="link-row">
+          <input type="text" id="shareUrlInput" readonly />
+          <button type="button" class="btn btn-small" id="copyLinkBtn">Copy</button>
         </div>
-        <p class="mt-2.5 text-xs font-semibold text-black/80">
-          Tip: Your tag name will pre-fill automatically in the checkout popup. Once paid, click <strong>Open Tag Manager</strong> again to unlock immediately.
-        </p>
-      </div>
-
-      <!-- Unlocked Pro Dashboard -->
-      <div id="pro-dashboard" class="mt-4 hidden space-y-4 rounded-xl border-[3px] border-black bg-[#F9F9F6] p-4 sm:p-5">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-black pb-3">
+        <div class="qr-wrap">
+          <canvas id="qrCanvas" width="168" height="168"></canvas>
           <div>
-            <span class="rounded-full border-2 border-black bg-[#FFFC00] px-2.5 py-0.5 text-xs font-extrabold uppercase">Pro Active</span>
-            <h3 id="pro-dash-title" class="font-brand mt-1 text-2xl font-bold uppercase text-black">@tag</h3>
+            <p style="font-size: 0.82rem; font-weight: 800; margin-bottom: 6px;">Put this link in your bio or print the QR code for flyers &amp; tables.</p>
+            <button type="button" class="btn btn-secondary btn-small" id="downloadQrBtn">Download QR PNG</button>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <span id="pro-follower-count" class="rounded-xl border-2 border-black bg-white px-3 py-1.5 text-sm font-extrabold">0 Followers</span>
-            <button type="button" id="export-csv-btn"
-              class="rounded-xl border-2 border-black bg-black px-3.5 py-1.5 text-xs font-extrabold uppercase text-[#FFFC00] transition hover:bg-neutral-800">
-              Export CSV
-            </button>
-          </div>
-        </div>
-
-        <!-- Subscriber List -->
-        <div>
-          <p class="mb-2 text-xs font-extrabold uppercase tracking-wider text-black">Active Followers</p>
-          <div id="pro-subscriber-list" class="max-h-56 space-y-1.5 overflow-y-auto rounded-xl border-2 border-black bg-white p-2.5 text-sm"></div>
         </div>
       </div>
     </section>
 
-    <footer class="mt-12 space-y-1.5 text-xs font-semibold text-black/80">
-      <p>SNAPMAIL.LIVE — E-mail marketing just got snappier. Built for creators, local crews, and communities.</p>
-      <p>Disclaimer: snapmail.live is a community-driven broadcast tool. Please respect subscriber inboxes and follow anti-spam laws.</p>
-    </footer>
-  </main>
+    <!-- CARD 2: SEND A FREE BLAST -->
+    <section class="card">
+      <div class="card-header">
+        <h2>Send a Free Blast</h2>
+      </div>
+      <p class="card-desc">Blast an instant update or promo to everyone subscribed to your tag.</p>
 
-  <script>
-    const API_BASE = 'https://xqqoymwsamdfpozuphze.supabase.co/functions/v1/api';
-    const GUMROAD_PRODUCT_URL = 'https://snapmaillive.gumroad.com/l/wdgxvo';
+      <form id="blastForm">
+        <label for="blastTag">Target Tag Name</label>
+        <input type="text" id="blastTag" placeholder="e.g. seattle-popups" required />
 
-    const subKeyInput = document.getElementById('sub-key');
-    const bcKeyInput = document.getElementById('bc-key');
-    const mgKeyInput = document.getElementById('mg-key');
-    const shareKit = document.getElementById('share-kit');
-    const shareTagBadge = document.getElementById('share-tag-badge');
-    const shareUrlInput = document.getElementById('share-url-input');
-    const qrContainer = document.getElementById('qr-container');
+        <label for="blastPin">Tag PIN</label>
+        <input type="password" id="blastPin" maxlength="4" inputmode="numeric" placeholder="Required if tag is PIN-protected" />
 
-    let currentSubscribers = [];
-    let activeProTag = '';
-    let activeProPin = '';
+        <label for="blastCategory">Blast Category</label>
+        <select id="blastCategory">
+          <option value="instant">⚡ Instant Drop / Live Announcement</option>
+          <option value="newsletter">📣 Newsletter / Upcoming Event</option>
+        </select>
 
-    function normalizeTag(raw) {
-      return String(raw || '')
-        .trim()
-        .replace(/^@+/, '')
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .slice(0, 64);
-    }
+        <label for="blastMessage">Blast Message (use **bold** for promo codes)</label>
+        <textarea id="blastMessage" placeholder="Hey crew! Flash drop tonight at 8 PM. Use **SNAP20** at checkout..." required></textarea>
 
-    function updateShareKit(rawTag) {
-      const slug = normalizeTag(rawTag);
-      if (!slug) {
-        shareKit.classList.add('hidden');
-        return;
-      }
-      const shareUrl = `https://snapmail.live/?tag=${encodeURIComponent(slug)}`;
-      shareTagBadge.textContent = `@${slug}`;
-      shareUrlInput.value = shareUrl;
-      shareKit.classList.remove('hidden');
-
-      qrContainer.innerHTML = '';
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(qrContainer, {
-          text: shareUrl,
-          width: 96,
-          height: 96,
-          colorDark: '#000000',
-          colorLight: '#FFFFFF',
-          correctLevel: QRCode.CorrectLevel.M
-        });
-      }
-    }
-
-    function updateGumroadLink(rawTag) {
-      const slug = normalizeTag(rawTag);
-      const upgradeLink = document.getElementById('gumroad-upgrade-link');
-      const upsellTagName = document.getElementById('upsell-tag-name');
-      upsellTagName.textContent = slug ? `@${slug}` : '@tag';
-      const sep = GUMROAD_PRODUCT_URL.includes('?') ? '&' : '?';
-      upgradeLink.href = slug
-        ? `${GUMROAD_PRODUCT_URL}${sep}Tag%20Name=${encodeURIComponent(slug)}`
-        : GUMROAD_PRODUCT_URL;
-    }
-
-    // Auto-fill tag from URL (?tag=...)
-    const urlParams = new URLSearchParams(window.location.search);
-    const initialTag = normalizeTag(urlParams.get('tag'));
-    if (initialTag) {
-      subKeyInput.value = initialTag;
-      bcKeyInput.value = initialTag;
-      mgKeyInput.value = initialTag;
-      updateShareKit(initialTag);
-      updateGumroadLink(initialTag);
-    }
-
-    subKeyInput.addEventListener('input', (e) => {
-      updateShareKit(e.target.value);
-      if (!mgKeyInput.value) updateGumroadLink(e.target.value);
-    });
-
-    mgKeyInput.addEventListener('input', (e) => {
-      updateGumroadLink(e.target.value);
-    });
-
-    document.getElementById('copy-link-btn').addEventListener('click', async () => {
-      const btn = document.getElementById('copy-link-btn');
-      try {
-        await navigator.clipboard.writeText(shareUrlInput.value);
-        btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
-      } catch (_) {
-        shareUrlInput.select();
-        document.execCommand('copy');
-        btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = 'Copy'; }, 1800);
-      }
-    });
-
-    document.getElementById('download-qr-btn').addEventListener('click', () => {
-      const slug = normalizeTag(subKeyInput.value) || 'snapmail';
-      const canvas = qrContainer.querySelector('canvas');
-      const img = qrContainer.querySelector('img');
-      const dataUrl = canvas ? canvas.toDataURL('image/png') : (img ? img.src : '');
-      if (!dataUrl) return;
-
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `snapmail-${slug}-qr.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
-
-    async function post(url, payload) {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      let data = {};
-      try { data = await res.json(); } catch (_) {}
-      if (res.status === 404 && !data.error) throw new Error('Backend not found. In Supabase, the Edge Function must be named exactly "api" and deployed.');
-      if (!res.ok) throw new Error(data.error || 'Something went wrong. Try again.');
-      return data;
-    }
-
-    function wire(formId, statusId, url, getPayload, busyText, onSuccess) {
-      const form = document.getElementById(formId);
-      const status = document.getElementById(statusId);
-      const button = form.querySelector('button[type="submit"]');
-      const label = button.textContent;
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        status.textContent = '';
-        status.className = 'min-h-[1.25rem] text-sm font-bold';
-        button.disabled = true;
-        button.textContent = busyText;
-        try {
-          const data = await post(url, getPayload());
-          if (data.message) {
-            status.textContent = data.message;
-            status.className = 'min-h-[1.25rem] text-sm font-bold text-emerald-700';
-          }
-          onSuccess(data);
-        } catch (err) {
-          status.textContent = err.message;
-          status.className = 'min-h-[1.25rem] text-sm font-bold text-red-600';
-        } finally {
-          button.disabled = false;
-          button.textContent = label;
-        }
-      });
-    }
-
-    wire('subscribe-form', 'subscribe-status', API_BASE,
-      () => ({
-        action: 'subscribe',
-        email: document.getElementById('sub-email').value,
-        locationKey: document.getElementById('sub-key').value,
-        pin: document.getElementById('sub-pin').value,
-      }),
-      'Joining…',
-      () => {
-        updateShareKit(document.getElementById('sub-key').value);
-        document.getElementById('sub-email').value = '';
-      }
-    );
-
-    wire('broadcast-form', 'broadcast-status', API_BASE,
-      () => ({
-        action: 'broadcast',
-        locationKey: document.getElementById('bc-key').value,
-        pin: document.getElementById('bc-pin').value,
-        alertType: document.getElementById('bc-type').value,
-        description: document.getElementById('bc-desc').value,
-        imageUrl: document.getElementById('bc-image').value,
-        ctaText: document.getElementById('bc-cta-text').value,
-        ctaUrl: document.getElementById('bc-cta-url').value,
-        safetyAgreed: document.getElementById('bc-safety').checked,
-      }),
-      'Sending Blast…',
-      () => {
-        document.getElementById('bc-desc').value = '';
-        document.getElementById('bc-image').value = '';
-        document.getElementById('bc-cta-text').value = '';
-        document.getElementById('bc-cta-url').value = '';
-        document.getElementById('bc-safety').checked = false;
-      }
-    );
-
-    function renderSubscriberList() {
-      const listEl = document.getElementById('pro-subscriber-list');
-      const countEl = document.getElementById('pro-follower-count');
-      countEl.textContent = `${currentSubscribers.length} Follower${currentSubscribers.length === 1 ? '' : 's'}`;
-
-      if (!currentSubscribers.length) {
-        listEl.innerHTML = '<p class="py-3 text-center text-xs font-semibold text-neutral-500">No subscribers yet. Share your tag link to grow your list!</p>';
-        return;
-      }
-
-      listEl.innerHTML = currentSubscribers.map((email) => `
-        <div class="flex items-center justify-between gap-2 rounded-lg border border-neutral-200 px-2.5 py-1.5">
-          <span class="truncate font-semibold text-black">${email}</span>
-          <button type="button" data-remove-email="${email}"
-            class="shrink-0 rounded-md border border-black bg-red-100 px-2 py-0.5 text-xs font-extrabold text-red-700 hover:bg-red-600 hover:text-white">
-            Remove
-          </button>
+        <div class="extras-toggle" id="extrasToggle">
+          <span>+ Add Flyer Image or Action Button (Optional)</span>
+          <span id="extrasArrow">▼</span>
         </div>
-      `).join('');
 
-      listEl.querySelectorAll('button[data-remove-email]').forEach((btn) => {
-        btn.addEventListener('click', async () => {
-          const targetEmail = btn.getAttribute('data-remove-email');
-          btn.disabled = true;
-          btn.textContent = '…';
-          try {
-            await post(API_BASE, {
-              action: 'remove-subscriber',
-              locationKey: activeProTag,
-              pin: activeProPin,
-              email: targetEmail,
-            });
-            currentSubscribers = currentSubscribers.filter((e) => e !== targetEmail);
-            renderSubscriberList();
-          } catch (err) {
-            alert(err.message);
-            btn.disabled = false;
-            btn.textContent = 'Remove';
-          }
+        <div class="extras-panel" id="extrasPanel">
+          <label for="blastImageUrl">Promo Flyer / Image URL</label>
+          <input type="url" id="blastImageUrl" placeholder="https://example.com/flyer.png" />
+
+          <label for="blastCtaLabel">Button Label</label>
+          <input type="text" id="blastCtaLabel" placeholder="e.g. Grab Tickets →" />
+
+          <label for="blastCtaUrl">Button Link URL</label>
+          <input type="url" id="blastCtaUrl" placeholder="https://yourlink.com/tickets" />
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="confirmCheck" required />
+          <label for="confirmCheck" style="margin-bottom: 0; font-weight: 600;">I confirm this message is legitimate, contains <strong>no</strong> spam or deceptive links, and is meant for subscribers of this tag.</label>
+        </div>
+
+        <button type="submit" class="btn" id="blastBtn">Send Email Blast</button>
+      </form>
+
+      <div id="blastStatus" class="status-msg"></div>
+    </section>
+
+    <!-- CARD 3: MANAGE YOUR FOLLOWERS (PRO $15/MO) -->
+    <section class="card">
+      <div class="card-header">
+        <h2>Manage Your Followers</h2>
+        <span class="badge">Pro • $15/mo</span>
+      </div>
+      <p class="card-desc">Export your subscriber CSV, view live follower counts, remove emails, and unlock unlimited white-label blasts.</p>
+
+      <form id="manageForm">
+        <label for="manageTag">Your Tag Name</label>
+        <input type="text" id="manageTag" placeholder="e.g. seattle-popups" required />
+
+        <label for="managePin">Creator PIN</label>
+        <input type="password" id="managePin" maxlength="4" inputmode="numeric" placeholder="Enter your 4-digit tag PIN" required />
+
+        <button type="submit" class="btn btn-secondary" id="manageBtn">Open Tag Manager</button>
+      </form>
+
+      <div id="manageStatus" class="status-msg"></div>
+
+      <!-- UPGRADE PROMPT WHEN TAG IS ON FREE TIER -->
+      <div id="proUpsell" class="pro-upsell">
+        <h3 id="upsellTitle">Upgrade @tag to Snapmail Pro</h3>
+        <ul>
+          <li>✓ View exact follower count &amp; download 1-click CSV backups</li>
+          <li>✓ Manually remove individual subscribers anytime</li>
+          <li>✓ Remove Snapmail footer branding &amp; bypass free daily limits</li>
+        </ul>
+        <a id="upgradeLink" href="https://snapmaillive.gumroad.com/l/wdgxvo?wanted=true" target="_blank" rel="noopener noreferrer" class="btn">Upgrade — $15/mo</a>
+        <p style="font-size: 0.78rem; font-weight: 700; margin-top: 8px;">Tip: Your tag name will pre-fill automatically on Gumroad in a new tab. Once paid, click <strong>Open Tag Manager</strong> again to unlock immediately.</p>
+      </div>
+
+      <!-- ACTIVE PRO FOLLOWER DASHBOARD -->
+      <div id="proDashboard" class="pro-dashboard">
+        <div class="pro-top-bar">
+          <div>
+            <span class="badge" style="background: #D1FAE5;">Pro Active</span>
+            <h3 id="proTagHeading" style="font-size: 1.1rem; font-weight: 900; margin-top: 4px;">@tag</h3>
+          </div>
+          <div style="text-align: right;">
+            <div id="proCountBadge" style="font-size: 1rem; font-weight: 900;">0 Followers</div>
+            <button type="button" class="btn btn-small" id="exportCsvBtn" style="margin-top: 4px;">Export CSV</button>
+          </div>
+        </div>
+        <label>Active Followers</label>
+        <div id="followerList" class="follower-list"></div>
+      </div>
+    </section>
+
+    <footer>
+      <div>SNAPMAIL.LIVE — E-mail marketing just got snappier. Built for creators, local crews, and communities.</div>
+      <div class="disclaimer">Disclaimer: snapmail.live is a community-driven broadcast tool. Please respect subscriber inboxes and follow anti-spam laws.</div>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <script>
+    const API_URL = 'https://xqqoymwsamdfpozuphze.supabase.co/functions/v1/api';
+    const GUMROAD_PRODUCT_URL = 'https://snapmaillive.gumroad.com/l/wdgxvo?wanted=true';
+
+    function cleanTag(raw) {
+      return raw.trim().toLowerCase().replace(/^@+/, '').replace(/[^a-z0-9-_]/g, '');
+    }
+
+    function showStatus(el, msg, isError = false) {
+      el.textContent = msg;
+      el.className = 'status-msg ' + (isError ? 'error' : 'success');
+    }
+
+    // Share Kit & QR Generator
+    const shareBox = document.getElementById('shareBox');
+    const shareTitle = document.getElementById('shareTitle');
+    const shareUrlInput = document.getElementById('shareUrlInput');
+    const qrCanvas = document.getElementById('qrCanvas');
+    let qrInstance = null;
+
+    function updateShareKit(tag) {
+      const cleaned = cleanTag(tag);
+      if (!cleaned) {
+        shareBox.classList.remove('active');
+        return;
+      }
+      const shareUrl = `${window.location.origin}/?tag=${encodeURIComponent(cleaned)}`;
+      shareTitle.textContent = `Share Your Tag @${cleaned}`;
+      shareUrlInput.value = shareUrl;
+      shareBox.classList.add('active');
+
+      if (window.QRious) {
+        qrInstance = new QRious({
+          element: qrCanvas,
+          value: shareUrl,
+          size: 168,
+          level: 'M'
         });
+      }
+    }
+
+    document.getElementById('joinTag').addEventListener('input', (e) => {
+      updateShareKit(e.target.value);
+    });
+
+    document.getElementById('copyLinkBtn').addEventListener('click', () => {
+      shareUrlInput.select();
+      navigator.clipboard.writeText(shareUrlInput.value);
+      const btn = document.getElementById('copyLinkBtn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => (btn.textContent = 'Copy'), 1500);
+    });
+
+    document.getElementById('downloadQrBtn').addEventListener('click', () => {
+      const tag = cleanTag(document.getElementById('joinTag').value) || 'tag';
+      const link = document.createElement('a');
+      link.download = `snapmail-${tag}-qr.png`;
+      link.href = qrCanvas.toDataURL('image/png');
+      link.click();
+    });
+
+    // Pre-fill tag from URL ?tag=...
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTag = urlParams.get('tag');
+    if (initialTag) {
+      const cleanedInitial = cleanTag(initialTag);
+      document.getElementById('joinTag').value = cleanedInitial;
+      document.getElementById('blastTag').value = cleanedInitial;
+      document.getElementById('manageTag').value = cleanedInitial;
+      updateShareKit(cleanedInitial);
+    }
+
+    // Extras Drawer Toggle
+    const extrasToggle = document.getElementById('extrasToggle');
+    const extrasPanel = document.getElementById('extrasPanel');
+    const extrasArrow = document.getElementById('extrasArrow');
+    extrasToggle.addEventListener('click', () => {
+      const isOpen = extrasPanel.classList.toggle('open');
+      extrasArrow.textContent = isOpen ? '▲' : '▼';
+    });
+
+    // 1. Join Tag Form
+    document.getElementById('joinForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('joinBtn');
+      const status = document.getElementById('joinStatus');
+      const email = document.getElementById('joinEmail').value.trim();
+      const locationKey = cleanTag(document.getElementById('joinTag').value);
+      const pin = document.getElementById('joinPin').value.trim();
+
+      btn.disabled = true;
+      btn.textContent = 'Joining...';
+      status.className = 'status-msg';
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'join', email, locationKey, pin })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not join tag.');
+        showStatus(status, data.message || `Joined @${locationKey}!`);
+        updateShareKit(locationKey);
+      } catch (err) {
+        showStatus(status, err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Join Tag List';
+      }
+    });
+
+    // 2. Send Blast Form
+    document.getElementById('blastForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('blastBtn');
+      const status = document.getElementById('blastStatus');
+      const locationKey = cleanTag(document.getElementById('blastTag').value);
+      const pin = document.getElementById('blastPin').value.trim();
+      const category = document.getElementById('blastCategory').value;
+      const message = document.getElementById('blastMessage').value.trim();
+      const imageUrl = document.getElementById('blastImageUrl').value.trim();
+      const ctaLabel = document.getElementById('blastCtaLabel').value.trim();
+      const ctaUrl = document.getElementById('blastCtaUrl').value.trim();
+
+      btn.disabled = true;
+      btn.textContent = 'Sending Blast...';
+      status.className = 'status-msg';
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'blast',
+            locationKey,
+            pin,
+            category,
+            message,
+            imageUrl,
+            ctaLabel,
+            ctaUrl
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to send blast.');
+        showStatus(status, data.message || 'Blast sent!');
+        document.getElementById('blastMessage').value = '';
+      } catch (err) {
+        showStatus(status, err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Email Blast';
+      }
+    });
+
+    // 3. Manage Followers (Pro)
+    let currentProSubscribers = [];
+    let currentProTag = '';
+    let currentProPin = '';
+
+    function renderFollowers(list) {
+      const container = document.getElementById('followerList');
+      const countBadge = document.getElementById('proCountBadge');
+      countBadge.textContent = `${list.length} Follower${list.length === 1 ? '' : 's'}`;
+      container.innerHTML = '';
+
+      if (!list.length) {
+        container.innerHTML = '<div class="follower-item" style="color:#666;">No active followers yet.</div>';
+        return;
+      }
+
+      list.forEach((email) => {
+        const row = document.createElement('div');
+        row.className = 'follower-item';
+        const span = document.createElement('span');
+        span.textContent = email;
+        const rmBtn = document.createElement('button');
+        rmBtn.type = 'button';
+        rmBtn.className = 'remove-btn';
+        rmBtn.textContent = 'Remove';
+        rmBtn.onclick = () => removeFollower(email);
+        row.appendChild(span);
+        row.appendChild(rmBtn);
+        container.appendChild(row);
       });
     }
 
-    wire('manage-form', 'manage-status', API_BASE,
-      () => ({
-        action: 'manage',
-        locationKey: document.getElementById('mg-key').value,
-        pin: document.getElementById('mg-pin').value,
-      }),
-      'Checking…',
-      (data) => {
-        const upsellBox = document.getElementById('pro-upsell-box');
-        const proDash = document.getElementById('pro-dashboard');
-        const tag = normalizeTag(document.getElementById('mg-key').value);
+    async function removeFollower(email) {
+      const status = document.getElementById('manageStatus');
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'remove_subscriber',
+            locationKey: currentProTag,
+            pin: currentProPin,
+            email
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not remove subscriber.');
+        currentProSubscribers = currentProSubscribers.filter((e) => e !== email);
+        renderFollowers(currentProSubscribers);
+        showStatus(status, `Removed ${email} from @${currentProTag}.`);
+      } catch (err) {
+        showStatus(status, err.message, true);
+      }
+    }
+
+    document.getElementById('manageForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('manageBtn');
+      const status = document.getElementById('manageStatus');
+      const upsell = document.getElementById('proUpsell');
+      const dashboard = document.getElementById('proDashboard');
+      const locationKey = cleanTag(document.getElementById('manageTag').value);
+      const pin = document.getElementById('managePin').value.trim();
+
+      btn.disabled = true;
+      btn.textContent = 'Checking...';
+      status.className = 'status-msg';
+      upsell.classList.remove('active');
+      dashboard.classList.remove('active');
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'manage', locationKey, pin })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Unable to verify tag.');
 
         if (!data.isPro) {
-          proDash.classList.add('hidden');
-          updateGumroadLink(tag);
-          upsellBox.classList.remove('hidden');
-          return;
+          document.getElementById('upsellTitle').textContent = `Upgrade @${locationKey} to Snapmail Pro`;
+          const upgradeLink = document.getElementById('upgradeLink');
+          upgradeLink.href = `${GUMROAD_PRODUCT_URL}&Tag%20Name=${encodeURIComponent(locationKey)}`;
+          upsell.classList.add('active');
+        } else {
+          currentProTag = locationKey;
+          currentProPin = pin;
+          currentProSubscribers = data.subscribers || [];
+          document.getElementById('proTagHeading').textContent = `@${locationKey}`;
+          renderFollowers(currentProSubscribers);
+          dashboard.classList.add('active');
         }
-
-        upsellBox.classList.add('hidden');
-        proDash.classList.remove('hidden');
-        activeProTag = tag;
-        activeProPin = document.getElementById('mg-pin').value;
-        currentSubscribers = data.subscribers || [];
-        document.getElementById('pro-dash-title').textContent = `@${tag}`;
-        renderSubscriberList();
+      } catch (err) {
+        showStatus(status, err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Open Tag Manager';
       }
-    );
+    });
 
-    document.getElementById('export-csv-btn').addEventListener('click', () => {
-      if (!currentSubscribers.length) {
-        alert('No subscribers to export yet.');
-        return;
-      }
-      const csvContent = 'email\n' + currentSubscribers.join('\n');
+    document.getElementById('exportCsvBtn').addEventListener('click', () => {
+      if (!currentProSubscribers.length) return;
+      const csvContent = 'email
+' + currentProSubscribers.join('
+');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `snapmail-${activeProTag || 'subscribers'}.csv`;
-      document.body.appendChild(a);
+      a.download = `snapmail-${currentProTag}-followers.csv`;
       a.click();
-      document.body.removeChild(a);
       URL.revokeObjectURL(url);
     });
   </script>
 </body>
 </html>
-
