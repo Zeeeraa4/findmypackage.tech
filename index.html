@@ -4,675 +4,423 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SNAPMAIL.LIVE – Free, Instant Tag-Based Email Blasts</title>
-  <link rel="icon" type="image/png" href="favicon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
     body {
+      font-family: 'Space Grotesk', sans-serif;
       background-color: #FFFC00;
       color: #000000;
-      min-height: 100vh;
-      padding: 28px 16px 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
-
-    .container {
-      width: 100%;
-      max-width: 560px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .logo-row {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .logo-row svg {
-      width: 36px;
-      height: 36px;
-      stroke: #000000;
-      stroke-width: 2.8;
-      fill: #FFFFFF;
-    }
-
-    h1 {
-      font-size: 2.3rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      text-transform: uppercase;
-    }
-
-    .subtitle {
-      font-size: 1.05rem;
-      font-weight: 600;
-      line-height: 1.4;
-      max-width: 460px;
-      margin: 0 auto 14px;
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .pill {
-      background: #FFFFFF;
-      border: 2.5px solid #000000;
-      border-radius: 999px;
-      padding: 5px 12px;
-      font-size: 0.8rem;
-      font-weight: 800;
-      box-shadow: 2px 2px 0 #000000;
-    }
-
-    .card {
+    .neo-card {
       background: #FFFFFF;
       border: 3px solid #000000;
-      border-radius: 18px;
-      padding: 22px;
-      margin-bottom: 20px;
-      box-shadow: 6px 6px 0 #000000;
+      box-shadow: 6px 6px 0px #000000;
     }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-      gap: 8px;
-    }
-
-    h2 {
-      font-size: 1.35rem;
-      font-weight: 900;
-    }
-
-    .badge {
-      background: #FFFC00;
-      border: 2px solid #000000;
-      border-radius: 999px;
-      padding: 3px 10px;
-      font-size: 0.75rem;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .card-desc {
-      font-size: 0.92rem;
-      color: #222222;
-      margin-bottom: 16px;
-      line-height: 1.4;
-    }
-
-    label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 800;
-      margin-bottom: 5px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="url"],
-    input[type="password"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px 14px;
-      border: 2.5px solid #000000;
-      border-radius: 12px;
-      font-size: 0.98rem;
-      font-weight: 600;
+    .neo-input {
       background: #FFFFFF;
-      color: #000000;
-      margin-bottom: 12px;
+      border: 2.5px solid #000000;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .neo-input:focus {
       outline: none;
+      box-shadow: 3px 3px 0px #000000;
+      transform: translate(-1px, -1px);
     }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      background: #FFFDF0;
-    }
-
-    textarea {
-      min-height: 110px;
-      resize: vertical;
-      line-height: 1.45;
-    }
-
-    .hint {
-      font-size: 0.8rem;
-      color: #444444;
-      margin-top: -8px;
-      margin-bottom: 12px;
-      font-weight: 600;
-    }
-
-    .btn {
-      width: 100%;
+    .neo-btn {
       background: #000000;
       color: #FFFC00;
       border: 2.5px solid #000000;
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 1rem;
-      font-weight: 900;
-      cursor: pointer;
-      transition: transform 0.08s ease;
-      text-align: center;
-      display: inline-block;
-      text-decoration: none;
+      box-shadow: 4px 4px 0px #000000;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
     }
-
-    .btn:active {
+    .neo-btn:hover:not(:disabled) {
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0px #000000;
+    }
+    .neo-btn:active:not(:disabled) {
       transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #000000;
     }
-
-    .btn:disabled {
+    .neo-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
-
-    .btn-secondary {
+    .neo-btn-yellow {
       background: #FFFC00;
       color: #000000;
-    }
-
-    .btn-small {
-      width: auto;
-      padding: 8px 14px;
-      font-size: 0.85rem;
-      border-radius: 10px;
-    }
-
-    .status-msg {
-      margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      display: none;
-      border: 2px solid #000000;
-    }
-
-    .status-msg.success {
-      display: block;
-      background: #D1FAE5;
-      color: #065F46;
-    }
-
-    .status-msg.error {
-      display: block;
-      background: #FEE2E2;
-      color: #991B1B;
-    }
-
-    .share-box {
-      margin-top: 16px;
-      padding: 16px;
-      background: #FFFC00;
       border: 2.5px solid #000000;
-      border-radius: 14px;
-      display: none;
+      box-shadow: 3px 3px 0px #000000;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
     }
-
-    .share-box.active {
-      display: block;
-    }
-
-    .share-title {
-      font-size: 0.95rem;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
-    .link-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .link-row input {
-      margin-bottom: 0;
-      font-size: 0.85rem;
-      background: #FFFFFF;
-    }
-
-    .qr-wrap {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: #FFFFFF;
-      border: 2px solid #000000;
-      border-radius: 12px;
-      padding: 10px;
-    }
-
-    #qrCanvas {
-      width: 84px;
-      height: 84px;
-      border: 1.5px solid #000000;
-      border-radius: 6px;
-      background: #FFFFFF;
-    }
-
-    .extras-toggle {
-      background: #F4F4F5;
-      border: 2px dashed #000000;
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 0.86rem;
-      font-weight: 800;
-      cursor: pointer;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .extras-panel {
-      display: none;
-      padding: 12px;
-      background: #FAFAFA;
-      border: 2px solid #000000;
-      border-radius: 12px;
-      margin-bottom: 12px;
-    }
-
-    .extras-panel.open {
-      display: block;
-    }
-
-    .checkbox-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 14px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      line-height: 1.35;
-    }
-
-    .checkbox-row input {
-      width: 18px;
-      height: 18px;
-      margin-top: 2px;
-      accent-color: #000000;
-      cursor: pointer;
-    }
-
-    .pro-upsell {
-      margin-top: 14px;
-      padding: 16px;
-      background: #FFFC00;
-      border: 2.5px solid #000000;
-      border-radius: 14px;
-      display: none;
-    }
-
-    .pro-upsell.active {
-      display: block;
-    }
-
-    .pro-upsell h3 {
-      font-size: 1.05rem;
-      font-weight: 900;
-      margin-bottom: 6px;
-    }
-
-    .pro-upsell ul {
-      margin: 0 0 14px 18px;
-      font-size: 0.86rem;
-      font-weight: 700;
-      line-height: 1.5;
-    }
-
-    .pro-dashboard {
-      margin-top: 14px;
-      padding: 16px;
-      background: #F9FAFB;
-      border: 2.5px solid #000000;
-      border-radius: 14px;
-      display: none;
-    }
-
-    .pro-dashboard.active {
-      display: block;
-    }
-
-    .pro-top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .follower-list {
-      max-height: 220px;
-      overflow-y: auto;
-      border: 2px solid #000000;
-      border-radius: 10px;
-      background: #FFFFFF;
-    }
-
-    .follower-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 9px 12px;
-      border-bottom: 1.5px solid #E5E7EB;
-      font-size: 0.86rem;
-      font-weight: 700;
-      gap: 8px;
-    }
-
-    .follower-item:last-child {
-      border-bottom: none;
-    }
-
-    .remove-btn {
-      background: #FEE2E2;
-      color: #991B1B;
-      border: 1.5px solid #000000;
-      border-radius: 6px;
-      padding: 3px 8px;
-      font-size: 0.75rem;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 12px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      line-height: 1.5;
-    }
-
-    .disclaimer {
-      font-size: 0.76rem;
-      font-weight: 600;
-      margin-top: 4px;
-      opacity: 0.85;
+    .neo-btn-yellow:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px #000000;
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <header>
-      <div class="logo-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="4" width="20" height="16" rx="3"></rect>
-          <path d="M22 6L12 13L2 6"></path>
-        </svg>
-        <h1>SNAPMAIL</h1>
+<body class="min-h-screen py-8 px-4">
+  <div class="max-w-xl mx-auto space-y-8">
+    <!-- Header -->
+    <header class="text-center space-y-3">
+      <div class="inline-flex items-center justify-center gap-2 bg-black text-[#FFFC00] px-4 py-1.5 rounded-full border-2 border-black font-bold text-sm tracking-wide">
+        <span>⚡</span>
+        <span>SNAPMAIL.LIVE</span>
       </div>
-      <p class="subtitle">E-mail marketing just got snappier. Drop a tag to build your list and blast updates to everyone at once—zero logins, no monthly fees required.</p>
-      <div class="pill-row">
-        <span class="pill">Free Forever Tier</span>
-        <span class="pill">5-Second Setup</span>
-        <span class="pill">Instant QR &amp; Bio Links</span>
+      <h1 class="text-4xl sm:text-5xl font-bold tracking-tight uppercase">SNAPMAIL</h1>
+      <p class="text-base sm:text-lg font-medium max-w-md mx-auto leading-snug">
+        E-mail marketing just got snappier. Drop a tag to build your list and blast updates to everyone at once—zero logins, no monthly fees required.
+      </p>
+      <div class="flex flex-wrap justify-center gap-2 pt-1 text-xs font-bold">
+        <span class="bg-white border-2 border-black px-3 py-1 rounded-full">Free Forever Tier</span>
+        <span class="bg-white border-2 border-black px-3 py-1 rounded-full">5-Second Setup</span>
+        <span class="bg-white border-2 border-black px-3 py-1 rounded-full">Instant QR &amp; Bio Links</span>
       </div>
     </header>
 
-    <!-- CARD 1: JOIN OR START A TAG -->
-    <section class="card">
-      <div class="card-header">
-        <h2>Join or Start a Tag</h2>
+    <!-- Card 1: Join or Start a Tag -->
+    <section class="neo-card rounded-2xl p-6 space-y-4">
+      <div>
+        <h2 class="text-2xl font-bold">Join or Start a Tag</h2>
+        <p class="text-sm text-neutral-700 font-medium">Subscribe to a tag or claim a new one for your crew.</p>
       </div>
-      <p class="card-desc">Subscribe to a tag or claim a new one for your crew.</p>
 
-      <form id="joinForm">
-        <label for="joinEmail">Your Email</label>
-        <input type="email" id="joinEmail" placeholder="you@example.com" required />
+      <form id="joinForm" class="space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <input
+            type="email"
+            id="joinEmail"
+            required
+            placeholder="Your Email"
+            class="neo-input w-full px-3.5 py-2.5 rounded-xl text-sm font-medium"
+          />
+          <input
+            type="text"
+            id="joinTag"
+            required
+            placeholder="Snapmail Tag Name"
+            class="neo-input w-full px-3.5 py-2.5 rounded-xl text-sm font-medium"
+          />
+        </div>
 
-        <label for="joinTag">Snapmail Tag Name</label>
-        <input type="text" id="joinTag" placeholder="e.g. seattle-popups" required />
-        <p class="hint">Once 5 members join a tag, live email blasts unlock automatically.</p>
+        <p class="text-xs font-medium text-neutral-600">
+          Once 5 members join a tag, live email blasts unlock automatically.
+        </p>
 
-        <label for="joinPin">Creator PIN (optional, 4 digits to lock new tag)</label>
-        <input type="password" id="joinPin" maxlength="4" pattern="\d{4}" inputmode="numeric" placeholder="e.g. 1234" />
-
-        <button type="submit" class="btn" id="joinBtn">Join Tag List</button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <input
+            type="password"
+            id="joinPin"
+            maxlength="4"
+            pattern="\d{4}"
+            inputmode="numeric"
+            placeholder="Creator PIN (optional, 4 digits to lock new tag)"
+            class="neo-input w-full px-3.5 py-2.5 rounded-xl text-sm font-medium"
+          />
+          <button
+            type="submit"
+            id="joinSubmitBtn"
+            class="neo-btn w-full py-2.5 px-4 rounded-xl font-bold text-sm uppercase tracking-wide"
+          >
+            Join Tag List
+          </button>
+        </div>
       </form>
 
-      <div id="joinStatus" class="status-msg"></div>
+      <div id="joinStatus" class="hidden text-sm font-bold p-3 rounded-xl border-2 border-black"></div>
 
-      <!-- 1-CLICK SHARE LINKS & QR CODES -->
-      <div id="shareBox" class="share-box">
-        <div class="share-title" id="shareTitle">Share Your Tag @tag</div>
-        <div class="link-row">
-          <input type="text" id="shareUrlInput" readonly />
-          <button type="button" class="btn btn-small" id="copyLinkBtn">Copy</button>
+      <!-- Share Kit -->
+      <div id="shareKit" class="hidden bg-[#FFFC00] border-2 border-black rounded-xl p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-sm">Share Your Tag <span id="shareTagLabel" class="underline">@tag</span></span>
+          <button type="button" id="copyLinkBtn" class="bg-black text-[#FFFC00] text-xs font-bold px-3 py-1 rounded-lg">
+            Copy
+          </button>
         </div>
-        <div class="qr-wrap">
-          <canvas id="qrCanvas" width="168" height="168"></canvas>
-          <div>
-            <p style="font-size: 0.82rem; font-weight: 800; margin-bottom: 6px;">Put this link in your bio or print the QR code for flyers &amp; tables.</p>
-            <button type="button" class="btn btn-secondary btn-small" id="downloadQrBtn">Download QR PNG</button>
+        <input
+          type="text"
+          id="shareLinkInput"
+          readonly
+          class="w-full bg-white border-2 border-black rounded-lg px-3 py-1.5 text-xs font-bold"
+        />
+        <div class="flex items-center justify-between gap-3 pt-1">
+          <p class="text-xs font-medium">Put this link in your bio or print the QR code for flyers &amp; tables.</p>
+          <div class="flex flex-col items-center gap-1.5 shrink-0">
+            <img id="qrPreview" alt="Tag QR Code" class="w-20 h-20 bg-white p-1 border-2 border-black rounded-lg" />
+            <button type="button" id="downloadQrBtn" class="bg-black text-white text-[11px] font-bold px-2.5 py-1 rounded-md">
+              Download QR PNG
+            </button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- CARD 2: SEND A FREE BLAST -->
-    <section class="card">
-      <div class="card-header">
-        <h2>Send a Free Blast</h2>
+    <!-- Card 2: Send a Free Blast -->
+    <section class="neo-card rounded-2xl p-6 space-y-4">
+      <div>
+        <h2 class="text-2xl font-bold">Send a Free Blast</h2>
+        <p class="text-sm text-neutral-700 font-medium">Blast an instant update or promo to everyone subscribed to your tag.</p>
       </div>
-      <p class="card-desc">Blast an instant update or promo to everyone subscribed to your tag.</p>
 
-      <form id="blastForm">
-        <label for="blastTag">Target Tag Name</label>
-        <input type="text" id="blastTag" placeholder="e.g. seattle-popups" required />
+      <form id="blastForm" class="space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <input
+            type="text"
+            id="blastTag"
+            required
+            placeholder="Target Tag Name"
+            class="neo-input w-full px-3.5 py-2.5 rounded-xl text-sm font-medium"
+          />
+          <input
+            type="password"
+            id="blastPin"
+            maxlength="4"
+            pattern="\d{4}"
+            inputmode="numeric"
+            placeholder="Tag PIN"
+            class="neo-input w-full px-3.5 py-2.5 rounded-xl text-sm font-medium"
+          />
+        </div>
 
-        <label for="blastPin">Tag PIN</label>
-        <input type="password" id="blastPin" maxlength="4" inputmode="numeric" placeholder="Required if tag is PIN-protected" />
-
-        <label for="blastCategory">Blast Category</label>
-        <select id="blastCategory">
-          <option value="instant">⚡ Instant Drop / Live Announcement</option>
-          <option value="newsletter">📣 Newsletter / Upcoming Event</option>
+        <select id="blastCategory" class="neo-input w-full px-3.5 py-2.5 rounded-xl text-sm font-bold">
+          <option value="⚡ Instant Drop / Live Announcement">⚡ Instant Drop / Live Announcement</option>
+          <option value="📣 Newsletter / Upcoming Event">📣 Newsletter / Upcoming Event</option>
         </select>
 
-        <label for="blastMessage">Blast Message (use **bold** for promo codes)</label>
-        <textarea id="blastMessage" placeholder="Hey crew! Flash drop tonight at 8 PM. Use **SNAP20** at checkout..." required></textarea>
+        <textarea
+          id="blastMessage"
+          rows="4"
+          required
+          placeholder="Blast Message (use **bold** for promo codes)"
+          class="neo-input w-full px-3.5 py-2.5 rounded-xl text-sm font-medium"
+        ></textarea>
 
-        <div class="extras-toggle" id="extrasToggle">
-          <span>+ Add Flyer Image or Action Button (Optional)</span>
-          <span id="extrasArrow">▼</span>
-        </div>
+        <details class="border-2 border-black rounded-xl p-3 bg-neutral-50">
+          <summary class="text-xs font-bold cursor-pointer select-none">
+            + Add Flyer Image or Action Button (Optional)
+          </summary>
+          <div class="space-y-2.5 pt-3">
+            <input
+              type="url"
+              id="blastImageUrl"
+              placeholder="Promo Flyer / Image URL"
+              class="neo-input w-full px-3 py-2 rounded-lg text-xs font-medium"
+            />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <input
+                type="text"
+                id="blastCtaText"
+                placeholder="Button Label"
+                class="neo-input w-full px-3 py-2 rounded-lg text-xs font-medium"
+              />
+              <input
+                type="url"
+                id="blastCtaUrl"
+                placeholder="Button Link URL"
+                class="neo-input w-full px-3 py-2 rounded-lg text-xs font-medium"
+              />
+            </div>
+          </div>
+        </details>
 
-        <div class="extras-panel" id="extrasPanel">
-          <label for="blastImageUrl">Promo Flyer / Image URL</label>
-          <input type="url" id="blastImageUrl" placeholder="https://example.com/flyer.png" />
+        <label class="flex items-start gap-2.5 text-xs font-medium cursor-pointer pt-1">
+          <input type="checkbox" id="spamConfirm" required class="mt-0.5 w-4 h-4 accent-black" />
+          <span>
+            I confirm this message is legitimate, contains <strong>no</strong> spam or deceptive links, and is meant for subscribers of this tag.
+          </span>
+        </label>
 
-          <label for="blastCtaLabel">Button Label</label>
-          <input type="text" id="blastCtaLabel" placeholder="e.g. Grab Tickets →" />
-
-          <label for="blastCtaUrl">Button Link URL</label>
-          <input type="url" id="blastCtaUrl" placeholder="https://yourlink.com/tickets" />
-        </div>
-
-        <div class="checkbox-row">
-          <input type="checkbox" id="confirmCheck" required />
-          <label for="confirmCheck" style="margin-bottom: 0; font-weight: 600;">I confirm this message is legitimate, contains <strong>no</strong> spam or deceptive links, and is meant for subscribers of this tag.</label>
-        </div>
-
-        <button type="submit" class="btn" id="blastBtn">Send Email Blast</button>
+        <button
+          type="submit"
+          id="blastSubmitBtn"
+          class="neo-btn w-full py-3 px-4 rounded-xl font-bold text-sm uppercase tracking-wide"
+        >
+          Send Email Blast
+        </button>
       </form>
 
-      <div id="blastStatus" class="status-msg"></div>
+      <div id="blastStatus" class="hidden text-sm font-bold p-3 rounded-xl border-2 border-black"></div>
     </section>
 
-    <!-- CARD 3: MANAGE YOUR FOLLOWERS (PRO $15/MO) -->
-    <section class="card">
-      <div class="card-header">
-        <h2>Manage Your Followers</h2>
-        <span class="badge">Pro • $15/mo</span>
+    <!-- Card 3: Manage Your Followers (Pro) -->
+    <section class="neo-card rounded-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between gap-2">
+        <div>
+          <h2 class="text-2xl font-bold">Manage Your Followers</h2>
+          <p class="text-sm text-neutral-700 font-medium">
+            Export your subscriber CSV, view live follower counts, remove emails, and unlock unlimited white-label blasts.
+          </p>
+        </div>
+        <span class="bg-[#FFFC00] border-2 border-black px-3 py-1 rounded-full text-xs font-bold shrink-0">
+          Pro • $15/mo
+        </span>
       </div>
-      <p class="card-desc">Export your subscriber CSV, view live follower counts, remove emails, and unlock unlimited white-label blasts.</p>
 
-      <form id="manageForm">
-        <label for="manageTag">Your Tag Name</label>
-        <input type="text" id="manageTag" placeholder="e.g. seattle-popups" required />
-
-        <label for="managePin">Creator PIN</label>
-        <input type="password" id="managePin" maxlength="4" inputmode="numeric" placeholder="Enter your 4-digit tag PIN" required />
-
-        <button type="submit" class="btn btn-secondary" id="manageBtn">Open Tag Manager</button>
+      <form id="manageForm" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <input
+          type="text"
+          id="manageTag"
+          required
+          placeholder="Your Tag Name"
+          class="neo-input w-full px-3.5 py-2.5 rounded-xl text-sm font-medium"
+        />
+        <input
+          type="password"
+          id="managePin"
+          maxlength="4"
+          pattern="\d{4}"
+          inputmode="numeric"
+          placeholder="Creator PIN"
+          class="neo-input w-full px-3.5 py-2.5 rounded-xl text-sm font-medium"
+        />
+        <button
+          type="submit"
+          id="manageUnlockBtn"
+          class="neo-btn w-full py-2.5 px-4 rounded-xl font-bold text-sm uppercase tracking-wide"
+        >
+          Open Tag Manager
+        </button>
       </form>
 
-      <div id="manageStatus" class="status-msg"></div>
+      <div id="manageStatus" class="hidden text-sm font-bold p-3 rounded-xl border-2 border-black"></div>
 
-      <!-- UPGRADE PROMPT WHEN TAG IS ON FREE TIER -->
-      <div id="proUpsell" class="pro-upsell">
-        <h3 id="upsellTitle">Upgrade @tag to Snapmail Pro</h3>
-        <ul>
+      <!-- Locked / Upgrade Prompt -->
+      <div id="proUpgradeBox" class="hidden bg-[#FFFC00] border-2 border-black rounded-xl p-4 space-y-3">
+        <h3 class="text-lg font-bold">Upgrade <span id="upgradeTagName">@tag</span> to Snapmail Pro</h3>
+        <ul class="text-xs font-bold space-y-1.5">
           <li>✓ View exact follower count &amp; download 1-click CSV backups</li>
           <li>✓ Manually remove individual subscribers anytime</li>
           <li>✓ Remove Snapmail footer branding &amp; bypass free daily limits</li>
         </ul>
-        <a id="upgradeLink" href="https://snapmaillive.gumroad.com/l/wdgxvo?wanted=true" target="_blank" rel="noopener noreferrer" class="btn">Upgrade — $15/mo</a>
-        <p style="font-size: 0.78rem; font-weight: 700; margin-top: 8px;">Tip: Your tag name will pre-fill automatically on Gumroad in a new tab. Once paid, click <strong>Open Tag Manager</strong> again to unlock immediately.</p>
+        <a
+          id="upgradeLink"
+          href="https://gumroad.com/checkout?product=wdgxvo&quantity=1"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="neo-btn block text-center w-full py-2.5 px-4 rounded-xl font-bold text-sm uppercase tracking-wide"
+        >
+          Upgrade — $15/mo
+        </a>
+        <p class="text-[11px] font-medium">
+          Tip: Your tag name will pre-fill automatically on Gumroad in a new tab. Once paid, click <strong>Open Tag Manager</strong> again to unlock immediately.
+        </p>
       </div>
 
-      <!-- ACTIVE PRO FOLLOWER DASHBOARD -->
-      <div id="proDashboard" class="pro-dashboard">
-        <div class="pro-top-bar">
+      <!-- Unlocked Pro Dashboard -->
+      <div id="proDashboard" class="hidden border-2 border-black rounded-xl p-4 space-y-3 bg-neutral-50">
+        <div class="flex items-center justify-between">
           <div>
-            <span class="badge" style="background: #D1FAE5;">Pro Active</span>
-            <h3 id="proTagHeading" style="font-size: 1.1rem; font-weight: 900; margin-top: 4px;">@tag</h3>
+            <span class="bg-black text-[#FFFC00] text-[10px] font-bold px-2 py-0.5 rounded uppercase">Pro Active</span>
+            <h3 id="proTagTitle" class="text-xl font-bold mt-1">@tag</h3>
           </div>
-          <div style="text-align: right;">
-            <div id="proCountBadge" style="font-size: 1rem; font-weight: 900;">0 Followers</div>
-            <button type="button" class="btn btn-small" id="exportCsvBtn" style="margin-top: 4px;">Export CSV</button>
+          <div class="flex items-center gap-2">
+            <span id="proFollowerCount" class="bg-[#FFFC00] border-2 border-black px-3 py-1 rounded-lg text-xs font-bold">
+              0 Followers
+            </span>
+            <button type="button" id="exportCsvBtn" class="neo-btn-yellow px-3 py-1 rounded-lg text-xs font-bold">
+              Export CSV
+            </button>
           </div>
         </div>
-        <label>Active Followers</label>
-        <div id="followerList" class="follower-list"></div>
+
+        <div class="text-xs font-bold uppercase text-neutral-600 pt-1">Active Followers</div>
+        <ul id="subscriberList" class="divide-y divide-neutral-300 border-2 border-black rounded-lg bg-white max-h-60 overflow-y-auto text-xs font-medium"></ul>
       </div>
     </section>
 
-    <footer>
-      <div>SNAPMAIL.LIVE — E-mail marketing just got snappier. Built for creators, local crews, and communities.</div>
-      <div class="disclaimer">Disclaimer: snapmail.live is a community-driven broadcast tool. Please respect subscriber inboxes and follow anti-spam laws.</div>
+    <!-- Footer -->
+    <footer class="text-center text-xs font-medium space-y-1 pb-6">
+      <p class="font-bold">SNAPMAIL.LIVE — E-mail marketing just got snappier. Built for creators, local crews, and communities.</p>
+      <p class="text-neutral-700">Disclaimer: snapmail.live is a community-driven broadcast tool. Please respect subscriber inboxes and follow anti-spam laws.</p>
     </footer>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <script>
     const API_URL = 'https://xqqoymwsamdfpozuphze.supabase.co/functions/v1/api';
-    const GUMROAD_PRODUCT_URL = 'https://snapmaillive.gumroad.com/l/wdgxvo?wanted=true';
+    const GUMROAD_PRODUCT_URL = 'https://gumroad.com/checkout?product=wdgxvo&quantity=1';
 
-    function cleanTag(raw) {
+    function normalizeTag(raw) {
       return raw.trim().toLowerCase().replace(/^@+/, '').replace(/[^a-z0-9-_]/g, '');
     }
 
-    function showStatus(el, msg, isError = false) {
+    function showBanner(el, msg, isError = false) {
       el.textContent = msg;
-      el.className = 'status-msg ' + (isError ? 'error' : 'success');
+      el.classList.remove('hidden', 'bg-red-100', 'text-red-900', 'bg-[#FFFC00]', 'text-black');
+      if (isError) {
+        el.classList.add('bg-red-100', 'text-red-900');
+      } else {
+        el.classList.add('bg-[#FFFC00]', 'text-black');
+      }
     }
 
-    // Share Kit & QR Generator
-    const shareBox = document.getElementById('shareBox');
-    const shareTitle = document.getElementById('shareTitle');
-    const shareUrlInput = document.getElementById('shareUrlInput');
-    const qrCanvas = document.getElementById('qrCanvas');
-    let qrInstance = null;
+    // Share kit updater
+    const joinTagInput = document.getElementById('joinTag');
+    const shareKit = document.getElementById('shareKit');
+    const shareTagLabel = document.getElementById('shareTagLabel');
+    const shareLinkInput = document.getElementById('shareLinkInput');
+    const qrPreview = document.getElementById('qrPreview');
 
-    function updateShareKit(tag) {
-      const cleaned = cleanTag(tag);
-      if (!cleaned) {
-        shareBox.classList.remove('active');
+    function updateShareKit(rawTag) {
+      const tag = normalizeTag(rawTag);
+      if (!tag) {
+        shareKit.classList.add('hidden');
         return;
       }
-      const shareUrl = `${window.location.origin}/?tag=${encodeURIComponent(cleaned)}`;
-      shareTitle.textContent = `Share Your Tag @${cleaned}`;
-      shareUrlInput.value = shareUrl;
-      shareBox.classList.add('active');
-
-      if (window.QRious) {
-        qrInstance = new QRious({
-          element: qrCanvas,
-          value: shareUrl,
-          size: 168,
-          level: 'M'
-        });
-      }
+      const url = `https://snapmail.live/?tag=${encodeURIComponent(tag)}`;
+      shareTagLabel.textContent = `@${tag}`;
+      shareLinkInput.value = url;
+      qrPreview.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
+      shareKit.classList.remove('hidden');
     }
 
-    document.getElementById('joinTag').addEventListener('input', (e) => {
-      updateShareKit(e.target.value);
-    });
+    joinTagInput.addEventListener('input', (e) => updateShareKit(e.target.value));
 
-    document.getElementById('copyLinkBtn').addEventListener('click', () => {
-      shareUrlInput.select();
-      navigator.clipboard.writeText(shareUrlInput.value);
+    // Auto-fill ?tag= from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTag = urlParams.get('tag');
+    if (initialTag) {
+      const clean = normalizeTag(initialTag);
+      joinTagInput.value = clean;
+      document.getElementById('blastTag').value = clean;
+      document.getElementById('manageTag').value = clean;
+      updateShareKit(clean);
+    }
+
+    document.getElementById('copyLinkBtn').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(shareLinkInput.value);
       const btn = document.getElementById('copyLinkBtn');
       btn.textContent = 'Copied!';
       setTimeout(() => (btn.textContent = 'Copy'), 1500);
     });
 
-    document.getElementById('downloadQrBtn').addEventListener('click', () => {
-      const tag = cleanTag(document.getElementById('joinTag').value) || 'tag';
-      const link = document.createElement('a');
-      link.download = `snapmail-${tag}-qr.png`;
-      link.href = qrCanvas.toDataURL('image/png');
-      link.click();
+    document.getElementById('downloadQrBtn').addEventListener('click', async () => {
+      const tag = normalizeTag(joinTagInput.value) || 'tag';
+      const res = await fetch(qrPreview.src);
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `snapmail-${tag}-qr.png`;
+      a.click();
     });
 
-    // Pre-fill tag from URL ?tag=...
-    const urlParams = new URLSearchParams(window.location.search);
-    const initialTag = urlParams.get('tag');
-    if (initialTag) {
-      const cleanedInitial = cleanTag(initialTag);
-      document.getElementById('joinTag').value = cleanedInitial;
-      document.getElementById('blastTag').value = cleanedInitial;
-      document.getElementById('manageTag').value = cleanedInitial;
-      updateShareKit(cleanedInitial);
-    }
-
-    // Extras Drawer Toggle
-    const extrasToggle = document.getElementById('extrasToggle');
-    const extrasPanel = document.getElementById('extrasPanel');
-    const extrasArrow = document.getElementById('extrasArrow');
-    extrasToggle.addEventListener('click', () => {
-      const isOpen = extrasPanel.classList.toggle('open');
-      extrasArrow.textContent = isOpen ? '▲' : '▼';
-    });
-
-    // 1. Join Tag Form
+    // Join Tag Form
     document.getElementById('joinForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('joinBtn');
-      const status = document.getElementById('joinStatus');
+      const btn = document.getElementById('joinSubmitBtn');
+      const statusEl = document.getElementById('joinStatus');
       const email = document.getElementById('joinEmail').value.trim();
-      const locationKey = cleanTag(document.getElementById('joinTag').value);
+      const locationKey = normalizeTag(joinTagInput.value);
       const pin = document.getElementById('joinPin').value.trim();
+
+      if (!locationKey) {
+        showBanner(statusEl, 'Please enter a valid tag name.', true);
+        return;
+      }
 
       btn.disabled = true;
       btn.textContent = 'Joining...';
-      status.className = 'status-msg';
-
       try {
         const res = await fetch(API_URL, {
           method: 'POST',
@@ -680,34 +428,34 @@
           body: JSON.stringify({ action: 'join', email, locationKey, pin })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Could not join tag.');
-        showStatus(status, data.message || `Joined @${locationKey}!`);
+        if (!res.ok) throw new Error(data.error || 'Failed to join tag.');
+        showBanner(statusEl, data.message, false);
         updateShareKit(locationKey);
+        document.getElementById('blastTag').value = locationKey;
+        document.getElementById('manageTag').value = locationKey;
       } catch (err) {
-        showStatus(status, err.message, true);
+        showBanner(statusEl, err.message, true);
       } finally {
         btn.disabled = false;
         btn.textContent = 'Join Tag List';
       }
     });
 
-    // 2. Send Blast Form
+    // Blast Form
     document.getElementById('blastForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('blastBtn');
-      const status = document.getElementById('blastStatus');
-      const locationKey = cleanTag(document.getElementById('blastTag').value);
+      const btn = document.getElementById('blastSubmitBtn');
+      const statusEl = document.getElementById('blastStatus');
+      const locationKey = normalizeTag(document.getElementById('blastTag').value);
       const pin = document.getElementById('blastPin').value.trim();
       const category = document.getElementById('blastCategory').value;
       const message = document.getElementById('blastMessage').value.trim();
       const imageUrl = document.getElementById('blastImageUrl').value.trim();
-      const ctaLabel = document.getElementById('blastCtaLabel').value.trim();
+      const ctaText = document.getElementById('blastCtaText').value.trim();
       const ctaUrl = document.getElementById('blastCtaUrl').value.trim();
 
       btn.disabled = true;
       btn.textContent = 'Sending Blast...';
-      status.className = 'status-msg';
-
       try {
         const res = await fetch(API_URL, {
           method: 'POST',
@@ -719,91 +467,85 @@
             category,
             message,
             imageUrl,
-            ctaLabel,
+            ctaText,
             ctaUrl
           })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to send blast.');
-        showStatus(status, data.message || 'Blast sent!');
+        showBanner(statusEl, data.message, false);
         document.getElementById('blastMessage').value = '';
       } catch (err) {
-        showStatus(status, err.message, true);
+        showBanner(statusEl, err.message, true);
       } finally {
         btn.disabled = false;
         btn.textContent = 'Send Email Blast';
       }
     });
 
-    // 3. Manage Followers (Pro)
-    let currentProSubscribers = [];
-    let currentProTag = '';
-    let currentProPin = '';
+    // Manage Followers (Pro)
+    let currentManageTag = '';
+    let currentManagePin = '';
+    let currentSubscribers = [];
 
-    function renderFollowers(list) {
-      const container = document.getElementById('followerList');
-      const countBadge = document.getElementById('proCountBadge');
-      countBadge.textContent = `${list.length} Follower${list.length === 1 ? '' : 's'}`;
-      container.innerHTML = '';
-
+    function renderSubscribers(list) {
+      const ul = document.getElementById('subscriberList');
+      document.getElementById('proFollowerCount').textContent = `${list.length} Follower${list.length === 1 ? '' : 's'}`;
+      ul.innerHTML = '';
       if (!list.length) {
-        container.innerHTML = '<div class="follower-item" style="color:#666;">No active followers yet.</div>';
+        ul.innerHTML = '<li class="p-3 text-neutral-500">No active followers yet.</li>';
         return;
       }
-
       list.forEach((email) => {
-        const row = document.createElement('div');
-        row.className = 'follower-item';
-        const span = document.createElement('span');
-        span.textContent = email;
-        const rmBtn = document.createElement('button');
-        rmBtn.type = 'button';
-        rmBtn.className = 'remove-btn';
-        rmBtn.textContent = 'Remove';
-        rmBtn.onclick = () => removeFollower(email);
-        row.appendChild(span);
-        row.appendChild(rmBtn);
-        container.appendChild(row);
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between px-3 py-2';
+        li.innerHTML = `
+          <span class="truncate pr-2">${email}</span>
+          <button type="button" class="text-red-600 font-bold hover:underline shrink-0">Remove</button>
+        `;
+        li.querySelector('button').addEventListener('click', () => removeSubscriber(email));
+        ul.appendChild(li);
       });
     }
 
-    async function removeFollower(email) {
-      const status = document.getElementById('manageStatus');
+    async function removeSubscriber(email) {
+      const statusEl = document.getElementById('manageStatus');
       try {
         const res = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             action: 'remove_subscriber',
-            locationKey: currentProTag,
-            pin: currentProPin,
+            locationKey: currentManageTag,
+            pin: currentManagePin,
             email
           })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Could not remove subscriber.');
-        currentProSubscribers = currentProSubscribers.filter((e) => e !== email);
-        renderFollowers(currentProSubscribers);
-        showStatus(status, `Removed ${email} from @${currentProTag}.`);
+        if (!res.ok) throw new Error(data.error || 'Failed to remove subscriber.');
+        currentSubscribers = currentSubscribers.filter((item) => item !== email);
+        renderSubscribers(currentSubscribers);
+        showBanner(statusEl, `Removed ${email}.`, false);
       } catch (err) {
-        showStatus(status, err.message, true);
+        showBanner(statusEl, err.message, true);
       }
     }
 
     document.getElementById('manageForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('manageBtn');
-      const status = document.getElementById('manageStatus');
-      const upsell = document.getElementById('proUpsell');
+      const btn = document.getElementById('manageUnlockBtn');
+      const statusEl = document.getElementById('manageStatus');
+      const upgradeBox = document.getElementById('proUpgradeBox');
       const dashboard = document.getElementById('proDashboard');
-      const locationKey = cleanTag(document.getElementById('manageTag').value);
+
+      const locationKey = normalizeTag(document.getElementById('manageTag').value);
       const pin = document.getElementById('managePin').value.trim();
 
       btn.disabled = true;
       btn.textContent = 'Checking...';
-      status.className = 'status-msg';
-      upsell.classList.remove('active');
-      dashboard.classList.remove('active');
+      statusEl.classList.add('hidden');
+      upgradeBox.classList.add('hidden');
+      dashboard.classList.add('hidden');
 
       try {
         const res = await fetch(API_URL, {
@@ -812,23 +554,24 @@
           body: JSON.stringify({ action: 'manage', locationKey, pin })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Unable to verify tag.');
+        if (!res.ok) throw new Error(data.error || 'Could not unlock tag.');
+
+        currentManageTag = locationKey;
+        currentManagePin = pin;
 
         if (!data.isPro) {
-          document.getElementById('upsellTitle').textContent = `Upgrade @${locationKey} to Snapmail Pro`;
-          const upgradeLink = document.getElementById('upgradeLink');
-          upgradeLink.href = `${GUMROAD_PRODUCT_URL}&Tag%20Name=${encodeURIComponent(locationKey)}`;
-          upsell.classList.add('active');
-        } else {
-          currentProTag = locationKey;
-          currentProPin = pin;
-          currentProSubscribers = data.subscribers || [];
-          document.getElementById('proTagHeading').textContent = `@${locationKey}`;
-          renderFollowers(currentProSubscribers);
-          dashboard.classList.add('active');
+          document.getElementById('upgradeTagName').textContent = `@${locationKey}`;
+          document.getElementById('upgradeLink').href = `${GUMROAD_PRODUCT_URL}&Tag%20Name=${encodeURIComponent(locationKey)}`;
+          upgradeBox.classList.remove('hidden');
+          return;
         }
+
+        currentSubscribers = data.subscribers || [];
+        document.getElementById('proTagTitle').textContent = `@${locationKey}`;
+        renderSubscribers(currentSubscribers);
+        dashboard.classList.remove('hidden');
       } catch (err) {
-        showStatus(status, err.message, true);
+        showBanner(statusEl, err.message, true);
       } finally {
         btn.disabled = false;
         btn.textContent = 'Open Tag Manager';
@@ -836,17 +579,12 @@
     });
 
     document.getElementById('exportCsvBtn').addEventListener('click', () => {
-      if (!currentProSubscribers.length) return;
-      const csvContent = 'email
-' + currentProSubscribers.join('
-');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
+      const csvRows = ['email', ...currentSubscribers];
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `snapmail-${currentProTag}-followers.csv`;
+      a.href = URL.createObjectURL(blob);
+      a.download = `snapmail-${currentManageTag || 'subscribers'}.csv`;
       a.click();
-      URL.revokeObjectURL(url);
     });
   </script>
 </body>
