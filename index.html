@@ -20,8 +20,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Oswald:wght@700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <!-- Lightweight QR Code Generator -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
     .font-brand { font-family: 'Oswald', sans-serif; }
@@ -31,13 +29,6 @@
     }
     .hard-input {
       border: 3px solid #000000;
-    }
-    #qr-canvas-wrap img, #qr-canvas-wrap canvas {
-      margin: 0 auto;
-      border: 3px solid #000000;
-      border-radius: 10px;
-      padding: 6px;
-      background: #ffffff;
     }
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
@@ -61,22 +52,22 @@
       </div>
 
       <p class="mt-4 text-base font-semibold leading-relaxed text-black/90 sm:text-lg">
-        E-marketing just got snappier. Drop a tag to build your list and blast updates to everyone at once—100% free, zero logins required.
+        E-marketing just got snappier. Drop a tag to build your list and blast promo drops, flyers, and updates to everyone in seconds—100% free, zero logins required.
       </p>
 
       <div class="mt-4 flex flex-wrap gap-2">
         <span class="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-extrabold uppercase tracking-wide">100% Free</span>
         <span class="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-extrabold uppercase tracking-wide">Zero Account Needed</span>
-        <span class="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-extrabold uppercase tracking-wide">Creator PIN Protected</span>
+        <span class="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-extrabold uppercase tracking-wide">Instant Tag Blasts</span>
       </div>
     </header>
 
     <div class="grid gap-8 md:grid-cols-2">
 
-      <!-- Card 1: subscribe & share -->
+      <!-- Card 1: subscribe + Share Kit -->
       <section class="hard-card rounded-2xl bg-white p-6 sm:p-7">
         <h2 class="font-brand text-2xl font-bold uppercase tracking-tight text-black">Join or Start a Tag</h2>
-        <p class="mt-1 text-sm font-medium text-neutral-700">Subscribe to a tag or claim a new one to get your share link &amp; QR code.</p>
+        <p class="mt-1 text-sm font-medium text-neutral-700">Subscribe to an existing tag or claim a brand-new one for your crew.</p>
 
         <form id="subscribe-form" class="mt-6 space-y-4" novalidate>
           <div>
@@ -88,16 +79,17 @@
             <label for="sub-key" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Snapmail Tag Name</label>
             <input id="sub-key" type="text" required maxlength="64" placeholder="seattle-popups"
               class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
-            <p class="mt-1.5 text-xs font-medium text-neutral-600">Once 5 people join a tag, live email blasts unlock.</p>
+            <p class="mt-1.5 text-xs font-medium text-neutral-600">Once 5 members join the same tag, live email blasts unlock automatically.</p>
           </div>
           <div>
             <label for="sub-pin" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">
-              Creator PIN <span class="font-semibold text-neutral-500">(optional 4-digit lock)</span>
+              Creator 4-Digit PIN <span class="font-semibold text-neutral-500">(optional, locks new tags)</span>
             </label>
-            <input id="sub-pin" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="e.g. 1234 (set if claiming a new tag)"
+            <input id="sub-pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="e.g. 1234"
               class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
-            <p class="mt-1 text-xs font-medium text-neutral-500">Leave blank if you're just joining someone else's tag.</p>
+            <p class="mt-1.5 text-xs font-medium text-neutral-600">Set a 4-digit PIN when starting a new tag so only you can blast your list.</p>
           </div>
+
           <button type="submit"
             class="font-brand w-full rounded-full border-[3px] border-black bg-white px-4 py-3 text-lg font-bold uppercase tracking-wider text-black transition hover:bg-black hover:text-[#FFFC00] focus:outline-none focus-visible:ring-2 focus-visible:ring-black disabled:cursor-not-allowed disabled:opacity-50">
             Join Tag List
@@ -105,26 +97,26 @@
           <p id="subscribe-status" role="status" aria-live="polite" class="min-h-[1.25rem] text-sm font-bold"></p>
         </form>
 
-        <!-- 1-Click Share Link & QR Code Box (Auto-shows when a tag is typed or joined) -->
-        <div id="share-kit" class="mt-5 hidden rounded-xl border-[3px] border-black bg-[#FFFC00] p-4">
-          <div class="flex items-center justify-between gap-2">
-            <span class="font-brand text-base font-bold uppercase tracking-wide text-black">Share Your Tag</span>
-            <span id="share-tag-badge" class="rounded-full border-2 border-black bg-white px-2.5 py-0.5 text-xs font-extrabold">@tag</span>
-          </div>
-          <div class="mt-2.5 flex items-center gap-2">
+        <!-- 1-Click Share Link & QR Code Kit -->
+        <div id="share-kit" class="mt-6 hidden rounded-xl border-[3px] border-black bg-[#FFFC00] p-4">
+          <p class="font-brand text-base font-bold uppercase tracking-wide text-black">Share Your Tag Link &amp; QR</p>
+          <p class="mt-0.5 text-xs font-semibold text-black/80">Put this link in your bio or print the QR for flyers &amp; tables.</p>
+
+          <div class="mt-3 flex items-center gap-2">
             <input id="share-url-input" type="text" readonly
               class="w-full rounded-lg border-2 border-black bg-white px-2.5 py-1.5 text-xs font-bold text-black outline-none">
             <button type="button" id="copy-link-btn"
-              class="shrink-0 rounded-lg border-2 border-black bg-black px-3 py-1.5 text-xs font-extrabold uppercase text-[#FFFC00] transition hover:bg-neutral-800">
+              class="shrink-0 rounded-lg border-2 border-black bg-black px-3 py-1.5 text-xs font-extrabold uppercase tracking-wide text-[#FFFC00] transition hover:bg-neutral-800">
               Copy
             </button>
           </div>
-          <div class="mt-3 flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
-            <div id="qr-canvas-wrap" class="shrink-0"></div>
-            <div class="text-center sm:text-left">
-              <p class="text-xs font-bold text-black">Put this QR code on flyers, merch tables, or Instagram Stories.</p>
+
+          <div class="mt-3 flex items-center gap-4">
+            <img id="qr-preview" alt="Snapmail Tag QR Code" class="h-24 w-24 rounded-lg border-2 border-black bg-white p-1">
+            <div class="space-y-2">
+              <p class="text-xs font-bold text-black">Scan to auto-fill <span id="qr-tag-label" class="underline">@tag</span></p>
               <button type="button" id="download-qr-btn"
-                class="mt-2 inline-block rounded-full border-2 border-black bg-white px-3.5 py-1.5 text-xs font-extrabold uppercase text-black transition hover:bg-black hover:text-[#FFFC00]">
+                class="inline-block rounded-lg border-2 border-black bg-white px-3 py-1.5 text-xs font-extrabold uppercase tracking-wide text-black transition hover:bg-black hover:text-[#FFFC00]">
                 Download QR PNG
               </button>
             </div>
@@ -135,7 +127,7 @@
       <!-- Card 2: broadcast -->
       <section class="hard-card rounded-2xl bg-white p-6 sm:p-7">
         <h2 class="font-brand text-2xl font-bold uppercase tracking-tight text-black">Send a Free Blast</h2>
-        <p class="mt-1 text-sm font-medium text-neutral-700">Got news, a drop, or an update? Blast everyone subscribed to your tag right now.</p>
+        <p class="mt-1 text-sm font-medium text-neutral-700">Send a promo drop, event flyer, or update to your tag list right now.</p>
 
         <form id="broadcast-form" class="mt-6 space-y-4" novalidate>
           <div>
@@ -145,24 +137,49 @@
           </div>
           <div>
             <label for="bc-pin" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">
-              Creator PIN <span class="font-semibold text-neutral-500">(if tag is locked)</span>
+              Creator 4-Digit PIN <span class="font-semibold text-neutral-500">(required if tag is locked)</span>
             </label>
-            <input id="bc-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="4-digit PIN (leave blank if unlocked)"
+            <input id="bc-pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="1234"
               class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
           </div>
           <div>
             <label for="bc-type" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Blast Category</label>
             <select id="bc-type"
               class="hard-input w-full rounded-xl bg-white px-3.5 py-2.5 font-semibold text-black outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20">
-              <option value="truck">⚡ Instant Drop / Live Announcement</option>
+              <option value="truck">⚡ Instant Drop / Flash Sale</option>
               <option value="sticker">📣 Newsletter / Upcoming Event</option>
             </select>
           </div>
           <div>
-            <label for="bc-desc" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">Blast Message <span class="font-semibold text-neutral-500">(optional)</span></label>
-            <textarea id="bc-desc" rows="3" maxlength="500" placeholder="Secret warehouse sale starts in 30 mins—show this email at the door for 20% off!"
+            <label for="bc-desc" class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-black">
+              Blast Message <span class="font-semibold text-neutral-500">(use **bold** for promo codes)</span>
+            </label>
+            <textarea id="bc-desc" rows="3" maxlength="500" placeholder="Secret warehouse sale starts in 30 mins—use **CODE: SNAP20** at the door for 20% off!"
               class="hard-input w-full resize-none rounded-xl bg-white px-3.5 py-2.5 font-medium text-black placeholder-neutral-400 outline-none transition focus:bg-[#FFFFE0] focus:ring-2 focus:ring-black/20"></textarea>
           </div>
+
+          <!-- Optional Marketing Extras: Flyer Image & CTA Button -->
+          <div class="rounded-xl border-2 border-dashed border-black bg-[#F9F9F5] p-3.5 space-y-3">
+            <p class="text-xs font-extrabold uppercase tracking-wider text-black">Optional Marketing Extras</p>
+            <div>
+              <label for="bc-image" class="mb-1 block text-[11px] font-bold uppercase text-neutral-700">Promo Flyer / Image URL</label>
+              <input id="bc-image" type="url" maxlength="500" placeholder="https://example.com/flyer.jpg"
+                class="w-full rounded-lg border-2 border-black bg-white px-3 py-1.5 text-sm font-medium text-black placeholder-neutral-400 outline-none focus:bg-[#FFFFE0]">
+            </div>
+            <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              <div>
+                <label for="bc-btn-text" class="mb-1 block text-[11px] font-bold uppercase text-neutral-700">Button Label</label>
+                <input id="bc-btn-text" type="text" maxlength="40" placeholder="Grab Tickets →"
+                  class="w-full rounded-lg border-2 border-black bg-white px-3 py-1.5 text-sm font-medium text-black placeholder-neutral-400 outline-none focus:bg-[#FFFFE0]">
+              </div>
+              <div>
+                <label for="bc-btn-url" class="mb-1 block text-[11px] font-bold uppercase text-neutral-700">Button Link</label>
+                <input id="bc-btn-url" type="url" maxlength="500" placeholder="https://yourlink.com"
+                  class="w-full rounded-lg border-2 border-black bg-white px-3 py-1.5 text-sm font-medium text-black placeholder-neutral-400 outline-none focus:bg-[#FFFFE0]">
+              </div>
+            </div>
+          </div>
+
           <label class="flex items-start gap-2.5 text-xs font-medium text-neutral-700 cursor-pointer">
             <input id="bc-safety" type="checkbox" required class="mt-0.5 h-4 w-4 rounded border-2 border-black accent-black">
             <span>I confirm this message is legitimate, contains <strong>no</strong> spam or deceptive links, and is meant for subscribers of this tag.</span>
@@ -177,7 +194,7 @@
     </div>
 
     <footer class="mt-12 space-y-1.5 text-xs font-semibold text-black/80">
-      <p>SNAPMAIL.LIVE — E-marketing just got snappier. Built for creators, local crews, and communities.</p>
+      <p>SNAPMAIL.LIVE — Built for creators, local crews, and communities who want fast email blasts without monthly fees.</p>
       <p>Disclaimer: snapmail.live is a community-driven broadcast tool. Please respect subscriber inboxes and follow anti-spam laws.</p>
     </footer>
   </main>
@@ -186,7 +203,7 @@
     // Your Supabase Edge Function URL. The function must be named exactly "api".
     const API_BASE = 'https://xqqoymwsamdfpozuphze.supabase.co/functions/v1/api';
 
-    function cleanSlug(raw) {
+    function normalizeTag(raw) {
       return String(raw || '')
         .trim()
         .replace(/^@+/, '')
@@ -195,62 +212,39 @@
         .slice(0, 64);
     }
 
-    // Share Link & QR Code Updater
     const shareKit = document.getElementById('share-kit');
-    const shareTagBadge = document.getElementById('share-tag-badge');
     const shareUrlInput = document.getElementById('share-url-input');
-    const qrWrap = document.getElementById('qr-canvas-wrap');
-    let lastQrTag = '';
+    const qrPreview = document.getElementById('qr-preview');
+    const qrTagLabel = document.getElementById('qr-tag-label');
+    const subKeyInput = document.getElementById('sub-key');
+    const bcKeyInput = document.getElementById('bc-key');
 
     function updateShareKit(rawTag) {
-      const slug = cleanSlug(rawTag);
-      if (!slug) {
+      const clean = normalizeTag(rawTag);
+      if (!clean) {
         shareKit.classList.add('hidden');
-        lastQrTag = '';
         return;
       }
-      const shareUrl = `https://snapmail.live/?tag=${encodeURIComponent(slug)}`;
-      shareTagBadge.textContent = `@${slug}`;
+      const shareUrl = `https://snapmail.live/?tag=${encodeURIComponent(clean)}`;
       shareUrlInput.value = shareUrl;
+      qrTagLabel.textContent = `@${clean}`;
+      qrPreview.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(shareUrl)}`;
       shareKit.classList.remove('hidden');
-
-      if (slug !== lastQrTag && typeof QRCode !== 'undefined') {
-        qrWrap.innerHTML = '';
-        new QRCode(qrWrap, {
-          text: shareUrl,
-          width: 112,
-          height: 112,
-          colorDark: '#000000',
-          colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.M
-        });
-        lastQrTag = slug;
-      }
     }
 
-    // Auto-fill tag from URL (?tag=seattle-popups)
-    window.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      const urlTag = params.get('tag');
-      if (urlTag) {
-        const cleaned = cleanSlug(urlTag);
-        document.getElementById('sub-key').value = cleaned;
-        document.getElementById('bc-key').value = cleaned;
-        updateShareKit(cleaned);
-      }
-    });
+    // Auto-fill from ?tag= query parameter on page load
+    const params = new URLSearchParams(window.location.search);
+    const initialTag = normalizeTag(params.get('tag'));
+    if (initialTag) {
+      subKeyInput.value = initialTag;
+      bcKeyInput.value = initialTag;
+      updateShareKit(initialTag);
+    }
 
-    // Live sync share kit as user types a tag
-    document.getElementById('sub-key').addEventListener('input', (e) => {
+    subKeyInput.addEventListener('input', (e) => {
       updateShareKit(e.target.value);
     });
-    document.getElementById('bc-key').addEventListener('input', (e) => {
-      if (!document.getElementById('sub-key').value) {
-        updateShareKit(e.target.value);
-      }
-    });
 
-    // Copy Share Link Button
     document.getElementById('copy-link-btn').addEventListener('click', async () => {
       const btn = document.getElementById('copy-link-btn');
       try {
@@ -265,24 +259,23 @@
       }
     });
 
-    // Download QR Code PNG
-    document.getElementById('download-qr-btn').addEventListener('click', () => {
-      const canvas = qrWrap.querySelector('canvas');
-      const img = qrWrap.querySelector('img');
-      const slug = cleanSlug(shareUrlInput.value.split('tag=')[1] || 'snapmail');
-      let dataUrl = '';
-      if (canvas) {
-        dataUrl = canvas.toDataURL('image/png');
-      } else if (img && img.src) {
-        dataUrl = img.src;
+    document.getElementById('download-qr-btn').addEventListener('click', async () => {
+      const clean = normalizeTag(subKeyInput.value) || 'snapmail';
+      const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=16&data=${encodeURIComponent(shareUrlInput.value)}`;
+      try {
+        const res = await fetch(qrSrc);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `snapmail-${clean}-qr.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (_) {
+        window.open(qrSrc, '_blank');
       }
-      if (!dataUrl) return;
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = `snapmail-${slug}-qr.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
     });
 
     async function post(url, payload) {
@@ -336,7 +329,6 @@
       () => {
         updateShareKit(document.getElementById('sub-key').value);
         document.getElementById('sub-email').value = '';
-        document.getElementById('sub-pin').value = '';
       }
     );
 
@@ -347,11 +339,17 @@
         pin: document.getElementById('bc-pin').value,
         alertType: document.getElementById('bc-type').value,
         description: document.getElementById('bc-desc').value,
+        imageUrl: document.getElementById('bc-image').value,
+        buttonText: document.getElementById('bc-btn-text').value,
+        buttonUrl: document.getElementById('bc-btn-url').value,
         safetyAgreed: document.getElementById('bc-safety').checked,
       }),
       'Sending Blast…',
       () => {
         document.getElementById('bc-desc').value = '';
+        document.getElementById('bc-image').value = '';
+        document.getElementById('bc-btn-text').value = '';
+        document.getElementById('bc-btn-url').value = '';
         document.getElementById('bc-safety').checked = false;
       }
     );
